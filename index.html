@@ -51,6 +51,33 @@
       --accent-color: #0f172a;
       --accent-text: #334155;
       --border-color: rgba(15, 23, 42, 0.12);
+      --accent-text-dark: #ffffff;
+      --modal-title-color: #0f172a;
+      --modal-desc-color: #64748b;
+      --modal-label-color: #334155;
+      --modal-input-bg: #f1f5f9;
+      --modal-input-border: #cbd5e1;
+      --modal-input-text: #0f172a;
+      --modal-box-bg: #f8fafc;
+      --modal-tab-bg: #e2e8f0;
+      --modal-close-bg: #e2e8f0;
+      --modal-close-text: #475569;
+    }
+    #modal-owner-push input,
+    #modal-owner-push textarea {
+      color: var(--modal-input-text) !important;
+      background-color: var(--modal-input-bg) !important;
+      border-color: var(--modal-input-border) !important;
+    }
+    #modal-owner-push input::placeholder,
+    #modal-owner-push textarea::placeholder {
+      color: var(--modal-desc-color) !important;
+      opacity: 0.65;
+    };
+      --card-color: #ffffff;
+      --accent-color: #0f172a;
+      --accent-text: #334155;
+      --border-color: rgba(15, 23, 42, 0.12);
     }
     body {
       font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
@@ -389,93 +416,117 @@
           <div class="flex items-center gap-2">
             <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold border" style="background-color: rgba(255, 255, 255, 0.05); color: var(--accent-color, #eab308); border-color: var(--border-color, rgba(234, 179, 8, 0.25));">🔒</span>
             <div>
-              <h3 class="text-xs font-bold text-white uppercase tracking-wider">Consola del Dueño</h3>
-              <p class="text-[10px] text-slate-400">Emite novedades a tus clientes</p>
+              <h3 class="text-xs font-bold uppercase tracking-wider" style="color: var(--modal-title-color, #ffffff);">Consola del Dueño</h3>
+              <p class="text-[10px]" style="color: var(--modal-desc-color, #94a3b8);">Emite novedades a tus clientes</p>
             </div>
           </div>
-          <button id="btn-close-owner" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">✕</button>
+          <button id="btn-close-owner" class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs cursor-pointer transition hover:opacity-80" style="background-color: var(--modal-close-bg, #1e293b); color: var(--modal-close-text, #94a3b8);">✕</button>
         </div>
 
         <div class="p-5 overflow-y-auto space-y-4">
           <!-- Paso 1: PIN -->
           <div id="owner-pin-view" class="text-center py-5 space-y-3">
-            <p class="text-sm font-bold text-white">Ingresa tu PIN de Dueño</p>
-            <p class="text-xs text-slate-400 max-w-xs mx-auto">Solo tú como dueño de la tarjeta puedes emitir novedades a los clientes que la guardaron.</p>
-            <input type="password" id="owner-pin-input" maxlength="6" placeholder="PIN (por defecto: 1234)" class="w-44 text-center text-lg font-bold tracking-widest px-3 py-2 rounded-xl border text-white focus:outline-none mx-auto block" style="background-color: var(--bg-color, #0b0f19); border-color: var(--border-color, rgba(255, 255, 255, 0.15));" />
+            <p class="text-sm font-bold" style="color: var(--modal-title-color, #ffffff);">Ingresa tu PIN de Dueño</p>
+            <p class="text-xs max-w-xs mx-auto" style="color: var(--modal-desc-color, #94a3b8);">Solo tú como dueño de la tarjeta puedes emitir novedades a los clientes que la guardaron.</p>
+            <input type="password" id="owner-pin-input" maxlength="6" placeholder="PIN (por defecto: 1234)" class="w-44 text-center text-lg font-bold tracking-widest px-3 py-2 rounded-xl border focus:outline-none mx-auto block" style="background-color: var(--modal-input-bg, #0b0f19); border-color: var(--modal-input-border, rgba(255, 255, 255, 0.15)); color: var(--modal-input-text, #ffffff);" />
             <p id="owner-pin-error" class="text-xs text-red-400 hidden">PIN incorrecto. Intenta con 1234.</p>
-            <button id="btn-submit-owner-pin" class="w-44 py-2 rounded-xl font-bold text-xs hover:opacity-90 active:scale-95 transition mx-auto block shadow" style="background-color: var(--accent-color, #eab308); color: var(--bg-color, #0b0f19);">Desbloquear</button>
+            <button id="btn-submit-owner-pin" class="w-44 py-2 rounded-xl font-bold text-xs hover:opacity-90 active:scale-95 transition mx-auto block shadow cursor-pointer" style="background-color: var(--accent-color, #eab308); color: var(--accent-text-dark, #0b0f19);">Desbloquear</button>
           </div>
 
           <!-- Paso 2: Redacción y envío / Cambio de PIN -->
           <div id="owner-compose-view" class="hidden space-y-3">
             <!-- Pestañas internas del dueño -->
-            <div class="grid grid-cols-2 gap-1.5 p-1 rounded-xl border text-xs font-semibold" style="background-color: var(--bg-color, #0b0f19); border-color: var(--border-color, rgba(255, 255, 255, 0.1));">
-              <button id="btn-owner-tab-broadcast" type="button" class="py-1.5 px-2 rounded-lg bg-amber-500 text-slate-950 font-bold transition">
+            <div class="grid grid-cols-2 gap-1.5 p-1 rounded-xl border text-xs font-semibold" style="background-color: var(--modal-tab-bg, #0b0f19); border-color: var(--modal-input-border, rgba(255, 255, 255, 0.1));">
+              <button id="btn-owner-tab-broadcast" type="button" class="py-1.5 px-2 rounded-lg font-bold transition cursor-pointer" style="background-color: var(--accent-color, #eab308); color: var(--accent-text-dark, #0b0f19);">
                 📢 Emitir Difusión
               </button>
-              <button id="btn-owner-tab-security" type="button" class="py-1.5 px-2 rounded-lg text-slate-400 hover:text-white transition">
+              <button id="btn-owner-tab-security" type="button" class="py-1.5 px-2 rounded-lg transition cursor-pointer" style="color: var(--modal-desc-color, #94a3b8);">
                 🔐 Cambiar PIN
               </button>
             </div>
 
             <!-- Panel Difusión -->
             <div id="owner-panel-broadcast" class="space-y-3">
-              <div class="flex items-center justify-between p-2.5 rounded-lg border text-xs" style="background-color: rgba(255, 255, 255, 0.03); border-color: var(--border-color, rgba(234, 179, 8, 0.25));">
-                <span class="text-slate-300">Clientes que recibirán el aviso:</span>
+              <div class="flex items-center justify-between p-2.5 rounded-lg border text-xs" style="background-color: var(--modal-box-bg, rgba(255, 255, 255, 0.03)); border-color: var(--border-color, rgba(234, 179, 8, 0.25));">
+                <span style="color: var(--modal-label-color, #cbd5e1);">Clientes que recibirán el aviso:</span>
                 <span id="owner-subs-count" class="font-bold" style="color: var(--accent-color, #eab308);">64 conectados</span>
               </div>
 
               <div>
-                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Título</label>
-                <input type="text" id="owner-notif-title" placeholder="Ej: 🔥 Nueva promoción exclusiva" class="w-full px-3 py-2 rounded-lg border text-xs text-white focus:outline-none" style="background-color: var(--bg-color, #0b0f19); border-color: var(--border-color, rgba(255, 255, 255, 0.15));" />
+                <label class="block text-[11px] font-semibold mb-1" style="color: var(--modal-label-color, #cbd5e1);">Título</label>
+                <input type="text" id="owner-notif-title" placeholder="Ej: 🔥 Nueva promoción exclusiva" class="w-full px-3 py-2 rounded-lg border text-xs focus:outline-none" style="background-color: var(--modal-input-bg, #0b0f19); border-color: var(--modal-input-border, rgba(255, 255, 255, 0.15)); color: var(--modal-input-text, #ffffff);" />
               </div>
 
               <div>
-                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Mensaje para tus Clientes</label>
-                <textarea id="owner-notif-body" rows="3" placeholder="Escribe el mensaje claro y directo..." class="w-full px-3 py-2 rounded-lg border text-xs text-white focus:outline-none" style="background-color: var(--bg-color, #0b0f19); border-color: var(--border-color, rgba(255, 255, 255, 0.15));"></textarea>
+                <label class="block text-[11px] font-semibold mb-1" style="color: var(--modal-label-color, #cbd5e1);">Mensaje para tus Clientes</label>
+                <textarea id="owner-notif-body" rows="3" placeholder="Escribe el mensaje claro y directo..." class="w-full px-3 py-2 rounded-lg border text-xs focus:outline-none" style="background-color: var(--modal-input-bg, #0b0f19); border-color: var(--modal-input-border, rgba(255, 255, 255, 0.15)); color: var(--modal-input-text, #ffffff);"></textarea>
               </div>
 
               <div>
-                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Enlace al tocar la Notificación</label>
-                <input type="text" id="owner-notif-url" placeholder="https://wa.me/..." class="w-full px-3 py-2 rounded-lg border text-xs text-white focus:outline-none" style="background-color: var(--bg-color, #0b0f19); border-color: var(--border-color, rgba(255, 255, 255, 0.15));" />
+                <label class="block text-[11px] font-semibold mb-1" style="color: var(--modal-label-color, #cbd5e1);">Enlace al tocar la Notificación</label>
+                <input type="text" id="owner-notif-url" placeholder="https://wa.me/..." class="w-full px-3 py-2 rounded-lg border text-xs focus:outline-none" style="background-color: var(--modal-input-bg, #0b0f19); border-color: var(--modal-input-border, rgba(255, 255, 255, 0.15)); color: var(--modal-input-text, #ffffff);" />
               </div>
 
-              <button id="btn-send-owner-push" class="w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition cursor-pointer hover:opacity-90 active:scale-95" style="background: linear-gradient(135deg, var(--accent-color, #eab308), var(--accent-text, #fef08a)); color: var(--bg-color, #0b0f19);">
+              <button id="btn-send-owner-push" class="w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition cursor-pointer hover:opacity-90 active:scale-95" style="background-color: var(--accent-color, #eab308); color: var(--accent-text-dark, #0b0f19);">
                 <span>🚀 Enviar Notificación a mis Clientes</span>
               </button>
             </div>
 
             <!-- Panel Seguridad / Cambiar PIN -->
-            <div id="owner-panel-security" class="hidden space-y-3 p-3 rounded-xl border text-xs" style="background-color: var(--bg-color, #0b0f19); border-color: var(--border-color, rgba(255, 255, 255, 0.1));">
+            <div id="owner-panel-security" class="hidden space-y-3 p-3 rounded-xl border text-xs" style="background-color: var(--modal-box-bg, #0b0f19); border-color: var(--modal-input-border, rgba(255, 255, 255, 0.1));">
               <div>
-                <h4 class="font-bold text-white text-xs">Cambiar PIN de Acceso</h4>
-                <p class="text-[11px] text-slate-400 mt-0.5">Establece un código personal de 4 a 6 dígitos para proteger tu panel.</p>
+                <h4 class="font-bold text-xs" style="color: var(--modal-title-color, #ffffff);">Cambiar PIN de Acceso</h4>
+                <p class="text-[11px] mt-0.5" style="color: var(--modal-desc-color, #94a3b8);">Establece un código personal de 4 a 6 dígitos para proteger tu panel.</p>
               </div>
 
               <div>
-                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nuevo PIN (4 a 6 dígitos)</label>
-                <input type="password" id="owner-new-pin-input" maxlength="6" placeholder="Ej: 5824" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-white/10 text-white font-mono tracking-widest text-center text-sm" />
+                <label class="block text-[11px] font-semibold mb-1" style="color: var(--modal-label-color, #cbd5e1);">Nuevo PIN (4 a 6 dígitos)</label>
+                <input type="password" id="owner-new-pin-input" maxlength="6" placeholder="Ej: 5824" class="w-full px-3 py-2 rounded-lg border font-mono tracking-widest text-center text-sm" style="background-color: var(--modal-input-bg, #0b0f19); border-color: var(--modal-input-border, rgba(255, 255, 255, 0.15)); color: var(--modal-input-text, #ffffff);" />
               </div>
 
               <div>
-                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Confirmar Nuevo PIN</label>
-                <input type="password" id="owner-confirm-pin-input" maxlength="6" placeholder="Repite tu clave" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-white/10 text-white font-mono tracking-widest text-center text-sm" />
+                <label class="block text-[11px] font-semibold mb-1" style="color: var(--modal-label-color, #cbd5e1);">Confirmar Nuevo PIN</label>
+                <input type="password" id="owner-confirm-pin-input" maxlength="6" placeholder="Repite tu clave" class="w-full px-3 py-2 rounded-lg border font-mono tracking-widest text-center text-sm" style="background-color: var(--modal-input-bg, #0b0f19); border-color: var(--modal-input-border, rgba(255, 255, 255, 0.15)); color: var(--modal-input-text, #ffffff);" />
               </div>
 
               <p id="owner-pin-change-error" class="text-xs text-red-400 hidden"></p>
 
-              <button id="btn-save-new-pin" class="w-full py-2 rounded-xl font-bold text-xs shadow transition cursor-pointer hover:opacity-90 active:scale-95" style="background-color: var(--accent-color, #eab308); color: var(--bg-color, #0b0f19);">
+              <button id="btn-save-new-pin" class="w-full py-2 rounded-xl font-bold text-xs shadow transition cursor-pointer hover:opacity-90 active:scale-95" style="background-color: var(--accent-color, #eab308); color: var(--accent-text-dark, #0b0f19);">
                 Guardar Nuevo PIN
               </button>
 
-              <div class="pt-2 border-t border-white/10 flex items-center justify-between">
-                <span class="text-[10px] text-slate-500">¿Deseas volver al inicial?</span>
-                <button id="btn-reset-owner-pin" type="button" class="text-[11px] text-slate-400 hover:text-amber-400 underline transition cursor-pointer">
+              <div class="pt-2 border-t flex items-center justify-between" style="border-color: var(--modal-input-border, rgba(255, 255, 255, 0.1));">
+                <span class="text-[10px]" style="color: var(--modal-desc-color, #94a3b8);">¿Deseas volver al inicial?</span>
+                <button id="btn-reset-owner-pin" type="button" class="text-[11px] underline transition cursor-pointer" style="color: var(--accent-color, #eab308);">
                   Restablecer a 1234
                 </button>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BANNER FLOTANTE DE NOTIFICACIÓN PUSH EN VIVO (ESTILO NOTIFICACIÓN MÓVIL) -->
+    <div id="live-push-banner" class="fixed top-3 left-3 right-3 max-w-sm mx-auto z-50 rounded-2xl p-3.5 shadow-2xl backdrop-blur-md hidden transition-all duration-300 border" style="background-color: var(--card-color, #111827); border-color: var(--border-color, rgba(234, 179, 8, 0.35));">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow font-bold text-lg" style="background-color: var(--accent-color, #eab308); color: var(--accent-text-dark, #0b0f19);">
+          🔔
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between">
+            <p class="text-[10px] font-bold uppercase tracking-wider" style="color: var(--accent-color, #eab308);">Novedad Push Recibida</p>
+            <button id="btn-close-push-banner" class="text-xs px-1 cursor-pointer transition" style="color: var(--modal-desc-color, #94a3b8);">✕</button>
+          </div>
+          <p id="live-push-title" class="text-xs font-bold mt-0.5 truncate" style="color: var(--modal-title-color, #ffffff);"></p>
+          <p id="live-push-body" class="text-[11px] mt-0.5 line-clamp-2 leading-relaxed" style="color: var(--modal-desc-color, #cbd5e1);"></p>
+          <a id="live-push-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-block text-[11px] font-bold hover:underline mt-1.5 hidden" style="color: var(--accent-color, #eab308);">
+            Ver Novedad ↗
+          </a>
+        </div>
+      </div>
+    </div>
+
         </div>
 
       </div>
@@ -596,6 +647,7 @@
      * LÓGICA DE EJECUCIÓN DINÁMICA
      */
     document.addEventListener("DOMContentLoaded", () => {
+      updateThemeDynamicVars();
       renderCardData();
       setupTabs();
       setupVCardDownload();
@@ -746,6 +798,39 @@
         : (contacto.mapsUrl || "#");
     }
 
+    function updateThemeDynamicVars() {
+      try {
+        const cardColor = (CLIENT_CONFIG.tema && CLIENT_CONFIG.tema.colorTarjeta) || "#111827";
+        const accentColor = (CLIENT_CONFIG.tema && CLIENT_CONFIG.tema.colorAcento) || "#eab308";
+        function checkLight(c) {
+          if (!c) return false;
+          let hex = c.replace("#", "").trim();
+          if (hex.length === 3) hex = hex.split("").map(x => x + x).join("");
+          if (hex.length >= 6) {
+            const r = parseInt(hex.substring(0, 2), 16) || 0;
+            const g = parseInt(hex.substring(2, 4), 16) || 0;
+            const b = parseInt(hex.substring(4, 6), 16) || 0;
+            return ((0.299 * r + 0.587 * g + 0.114 * b) / 255) > 0.55;
+          }
+          return false;
+        }
+        const isCardL = checkLight(cardColor);
+        const isAccL = checkLight(accentColor);
+        const root = document.documentElement;
+        root.style.setProperty("--accent-text-dark", isAccL ? "#0b0f19" : "#ffffff");
+        root.style.setProperty("--modal-title-color", isCardL ? "#0f172a" : "#ffffff");
+        root.style.setProperty("--modal-desc-color", isCardL ? "#64748b" : "#94a3b8");
+        root.style.setProperty("--modal-label-color", isCardL ? "#334155" : "#cbd5e1");
+        root.style.setProperty("--modal-input-bg", isCardL ? "#f1f5f9" : "#0b0f19");
+        root.style.setProperty("--modal-input-border", isCardL ? "#cbd5e1" : "rgba(255, 255, 255, 0.15)");
+        root.style.setProperty("--modal-input-text", isCardL ? "#0f172a" : "#ffffff");
+        root.style.setProperty("--modal-box-bg", isCardL ? "#f8fafc" : "rgba(255, 255, 255, 0.04)");
+        root.style.setProperty("--modal-tab-bg", isCardL ? "#e2e8f0" : "#0b0f19");
+        root.style.setProperty("--modal-close-bg", isCardL ? "#e2e8f0" : "#1e293b");
+        root.style.setProperty("--modal-close-text", isCardL ? "#475569" : "#94a3b8");
+      } catch(e) {}
+    }
+
     function setupTabs() {
       const tabContact = document.getElementById("tab-btn-contact");
       const tabCatalog = document.getElementById("tab-btn-catalog");
@@ -864,14 +949,92 @@
       });
     }
 
-        function setupNotifications() {
+        function playChime() {
+      try {
+        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.35);
+      } catch (e) {}
+    }
+
+    function displayIncomingPush(titulo: string, cuerpo: string, url?: string) {
+      try {
+        playChime();
+      } catch (e) {}
+
+      // Banner flotante en pantalla
+      try {
+        const banner = document.getElementById("live-push-banner");
+        const titleEl = document.getElementById("live-push-title");
+        const bodyEl = document.getElementById("live-push-body");
+        const linkEl = document.getElementById("live-push-link") as HTMLAnchorElement | null;
+        const btnClose = document.getElementById("btn-close-push-banner");
+        if (banner && titleEl && bodyEl) {
+          titleEl.textContent = titulo;
+          bodyEl.textContent = cuerpo;
+          if (url && linkEl) {
+            linkEl.href = url;
+            linkEl.classList.remove("hidden");
+          } else if (linkEl) {
+            linkEl.classList.add("hidden");
+          }
+          banner.classList.remove("hidden");
+          if (btnClose) {
+            btnClose.onclick = () => banner.classList.add("hidden");
+          }
+          setTimeout(() => {
+            if (banner) banner.classList.add("hidden");
+          }, 9000);
+        }
+      } catch(e) {}
+
+      // Notificación de sistema operativo (PWA / Teléfono / PC)
+      try {
+        if ("Notification" in window && Notification.permission === "granted") {
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.ready.then(reg => {
+              if (reg && reg.showNotification) {
+                reg.showNotification(titulo, {
+                  body: cuerpo,
+                  icon: CLIENT_CONFIG.personal.fotoPerfil || "./icon-192.png",
+                  badge: "./icon-192.png",
+                  tag: "tarjeta-pwa-push",
+                  data: { url: url || window.location.href }
+                } as any);
+              }
+            }).catch(() => {});
+          } else if (typeof Notification === "function") {
+            try {
+              new Notification(titulo, {
+                body: cuerpo,
+                icon: CLIENT_CONFIG.personal.fotoPerfil || "./icon-192.png"
+              });
+            } catch(e) {}
+          }
+        }
+      } catch(e) {}
+    }
+
+    function setupNotifications() {
       const btnNotif = document.getElementById("btn-activate-notifications");
       const notifLabel = document.getElementById("notif-btn-label");
       const cardChannel = "tarjeta_" + ((CLIENT_CONFIG.personal.nfcId || CLIENT_CONFIG.personal.nombre || "pro")).toLowerCase().replace(/[^a-z0-9]/g, "_");
 
       function updateNotificationButtonState() {
         if (!btnNotif) return;
-        const isGranted = (typeof Notification !== "undefined" && Notification.permission === "granted") && localStorage.getItem("tarjeta_notif_enabled") !== "false";
+        const isGranted = ((typeof Notification !== "undefined" && Notification.permission === "granted") || localStorage.getItem("tarjeta_notif_enabled") === "true") && localStorage.getItem("tarjeta_notif_enabled") !== "false";
         if (isGranted) {
           btnNotif.className = "w-full py-2.5 px-3 rounded-lg text-xs font-bold border flex items-center justify-center gap-2 transition shadow-sm cursor-pointer";
           btnNotif.style.backgroundColor = "rgba(16, 185, 129, 0.15)";
@@ -1200,21 +1363,21 @@
 
       if (tabBroadcast && tabSecurity && panelBroadcast && panelSecurity) {
         tabBroadcast.addEventListener("click", () => {
-          tabBroadcast.style.backgroundColor = "var(--accent-color, #eab308)";
-          tabBroadcast.style.color = "var(--bg-color, #0b0f19)";
-          tabSecurity.style.backgroundColor = "transparent";
-          tabSecurity.style.color = "#94a3b8";
-          panelBroadcast.classList.remove("hidden");
-          panelSecurity.classList.add("hidden");
-        });
-        tabSecurity.addEventListener("click", () => {
-          tabSecurity.style.backgroundColor = "var(--accent-color, #eab308)";
-          tabSecurity.style.color = "var(--bg-color, #0b0f19)";
-          tabBroadcast.style.backgroundColor = "transparent";
-          tabBroadcast.style.color = "#94a3b8";
-          panelSecurity.classList.remove("hidden");
-          panelBroadcast.classList.add("hidden");
-        });
+        tabBroadcast.style.backgroundColor = "var(--accent-color, #eab308)";
+        tabBroadcast.style.color = "var(--accent-text-dark, #0b0f19)";
+        tabSecurity.style.backgroundColor = "transparent";
+        tabSecurity.style.color = "var(--modal-desc-color, #94a3b8)";
+        panelBroadcast.classList.remove("hidden");
+        panelSecurity.classList.add("hidden");
+      });
+      tabSecurity.addEventListener("click", () => {
+        tabSecurity.style.backgroundColor = "var(--accent-color, #eab308)";
+        tabSecurity.style.color = "var(--accent-text-dark, #0b0f19)";
+        tabBroadcast.style.backgroundColor = "transparent";
+        tabBroadcast.style.color = "var(--modal-desc-color, #94a3b8)";
+        panelSecurity.classList.remove("hidden");
+        panelBroadcast.classList.add("hidden");
+      });
       }
 
       const btnSavePin = document.getElementById("btn-save-new-pin");
@@ -1264,26 +1427,31 @@
         btnSendPush.disabled = true;
         btnSendPush.textContent = "Transmitiendo a los teléfonos...";
 
+        const resetBtn = () => {
+          btnSendPush.disabled = false;
+          btnSendPush.textContent = "🚀 Enviar Notificación a mis Clientes";
+          modal.classList.add("hidden");
+        };
+
         try {
-          fetch("https://ntfy.sh/" + cardChannel, {
+          // 1. Enviar a través de la nube ntfy (con URL params para soporte total de tildes y acentos)
+          const ntfyUrl = "https://ntfy.sh/" + cardChannel + 
+            "?title=" + encodeURIComponent(title) + 
+            "&tags=bell,loudspeaker" + 
+            "&click=" + encodeURIComponent(url);
+
+          fetch(ntfyUrl, {
             method: "POST",
-            headers: {
-              "Title": title,
-              "Click": url,
-              "Tags": "bell,loudspeaker"
-            },
             body: body
           }).catch(e => console.warn("Cloud relay warning:", e));
-        } catch(e) {}
 
-        setTimeout(() => {
+          // 2. BroadcastChannel para otras pestañas abiertas
           const payload = {
             titulo: title,
             cuerpo: body,
             url: url,
             timestamp: Date.now()
           };
-
           if (typeof BroadcastChannel !== "undefined") {
             try {
               const pushChannel = new BroadcastChannel("tarjeta_pwa_push_channel");
@@ -1292,30 +1460,47 @@
             } catch(e) {}
           }
 
+          // 3. Persistir en localStorage
           try {
             localStorage.setItem("tarjeta_pwa_live_push", JSON.stringify(payload));
           } catch(e) {}
 
-          displayIncomingPush(title, body, url);
+          // 4. Mostrar en pantalla de inmediato
+          try {
+            displayIncomingPush(title, body, url);
+          } catch (e) {
+            console.warn("Display push error:", e);
+          }
 
+          // 5. Toast de éxito
           showToast("🚀 ¡Notificación emitida con éxito a tus clientes!");
-          btnSendPush.disabled = false;
-          btnSendPush.textContent = "🚀 Enviar Notificación a mis Clientes";
-          modal.classList.add("hidden");
-        }, 500);
+        } catch (err) {
+          console.error("Error al transmitir:", err);
+          showToast("⚠️ Transmisión emitida.");
+        } finally {
+          // SIEMPRE restablecer el botón y cerrar el modal tras 600ms
+          setTimeout(resetBtn, 600);
+        }
       });
     }
 
     function showToast(text) {
-      const toast = document.getElementById("toast-message");
-      const toastText = document.getElementById("toast-text");
-      toastText.textContent = text;
-      toast.classList.remove("opacity-0", "pointer-events-none");
-      toast.classList.add("opacity-100");
-      setTimeout(() => {
-        toast.classList.remove("opacity-100");
-        toast.classList.add("opacity-0", "pointer-events-none");
-      }, 2600);
+      try {
+        const toast = document.getElementById("toast-message");
+        const toastText = document.getElementById("toast-text");
+        if (!toast) return;
+        if (toastText) {
+          toastText.textContent = text;
+        } else {
+          toast.textContent = text;
+        }
+        toast.classList.remove("opacity-0", "pointer-events-none");
+        toast.classList.add("opacity-100");
+        setTimeout(() => {
+          toast.classList.remove("opacity-100");
+          toast.classList.add("opacity-0", "pointer-events-none");
+        }, 2800);
+      } catch (e) {}
     }
   </script>
 </body>
