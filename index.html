@@ -383,11 +383,11 @@
 
     <!-- MODAL DUEÑO: CONSOLA DE DIFUSIÓN PUSH CON PIN -->
     <div id="modal-owner-push" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div class="w-full max-w-md rounded-t-3xl sm:rounded-2xl bg-slate-900 border-t sm:border border-white/10 shadow-2xl relative max-h-[92vh] flex flex-col overflow-hidden">
+      <div class="w-full max-w-md rounded-t-3xl sm:rounded-2xl border-t sm:border shadow-2xl relative max-h-[92vh] flex flex-col overflow-hidden" style="background-color: var(--card-color, #111827); border-color: var(--border-color, rgba(234, 179, 8, 0.25));">
         
-        <div class="p-4 border-b border-white/10 flex items-center justify-between bg-slate-950/80">
+        <div class="p-4 border-b flex items-center justify-between" style="background-color: var(--bg-color, #0b0f19); border-color: var(--border-color, rgba(234, 179, 8, 0.25));">
           <div class="flex items-center gap-2">
-            <span class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-bold">🔒</span>
+            <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold border" style="background-color: rgba(255, 255, 255, 0.05); color: var(--accent-color, #eab308); border-color: var(--border-color, rgba(234, 179, 8, 0.25));">🔒</span>
             <div>
               <h3 class="text-xs font-bold text-white uppercase tracking-wider">Consola del Dueño</h3>
               <p class="text-[10px] text-slate-400">Emite novedades a tus clientes</p>
@@ -401,15 +401,15 @@
           <div id="owner-pin-view" class="text-center py-5 space-y-3">
             <p class="text-sm font-bold text-white">Ingresa tu PIN de Dueño</p>
             <p class="text-xs text-slate-400 max-w-xs mx-auto">Solo tú como dueño de la tarjeta puedes emitir novedades a los clientes que la guardaron.</p>
-            <input type="password" id="owner-pin-input" maxlength="6" placeholder="PIN (por defecto: 1234)" class="w-44 text-center text-lg font-bold tracking-widest px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:outline-none focus:border-amber-400 mx-auto block" />
+            <input type="password" id="owner-pin-input" maxlength="6" placeholder="PIN (por defecto: 1234)" class="w-44 text-center text-lg font-bold tracking-widest px-3 py-2 rounded-xl border text-white focus:outline-none mx-auto block" style="background-color: var(--bg-color, #0b0f19); border-color: var(--border-color, rgba(255, 255, 255, 0.15));" />
             <p id="owner-pin-error" class="text-xs text-red-400 hidden">PIN incorrecto. Intenta con 1234.</p>
-            <button id="btn-submit-owner-pin" class="w-44 py-2 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 mx-auto block">Desbloquear</button>
+            <button id="btn-submit-owner-pin" class="w-44 py-2 rounded-xl font-bold text-xs hover:opacity-90 active:scale-95 transition mx-auto block shadow" style="background-color: var(--accent-color, #eab308); color: var(--bg-color, #0b0f19);">Desbloquear</button>
           </div>
 
           <!-- Paso 2: Redacción y envío / Cambio de PIN -->
           <div id="owner-compose-view" class="hidden space-y-3">
             <!-- Pestañas internas del dueño -->
-            <div class="grid grid-cols-2 gap-1.5 bg-slate-950 p-1 rounded-xl border border-white/10 text-xs font-semibold">
+            <div class="grid grid-cols-2 gap-1.5 p-1 rounded-xl border text-xs font-semibold" style="background-color: var(--bg-color, #0b0f19); border-color: var(--border-color, rgba(255, 255, 255, 0.1));">
               <button id="btn-owner-tab-broadcast" type="button" class="py-1.5 px-2 rounded-lg bg-amber-500 text-slate-950 font-bold transition">
                 📢 Emitir Difusión
               </button>
@@ -420,33 +420,33 @@
 
             <!-- Panel Difusión -->
             <div id="owner-panel-broadcast" class="space-y-3">
-              <div class="flex items-center justify-between p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs">
+              <div class="flex items-center justify-between p-2.5 rounded-lg border text-xs" style="background-color: rgba(255, 255, 255, 0.03); border-color: var(--border-color, rgba(234, 179, 8, 0.25));">
                 <span class="text-slate-300">Clientes que recibirán el aviso:</span>
-                <span id="owner-subs-count" class="font-bold text-amber-400">64 conectados</span>
+                <span id="owner-subs-count" class="font-bold" style="color: var(--accent-color, #eab308);">64 conectados</span>
               </div>
 
               <div>
                 <label class="block text-[11px] font-semibold text-slate-300 mb-1">Título</label>
-                <input type="text" id="owner-notif-title" placeholder="Ej: 🔥 Nueva promoción exclusiva" class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-white/10 text-xs text-white" />
+                <input type="text" id="owner-notif-title" placeholder="Ej: 🔥 Nueva promoción exclusiva" class="w-full px-3 py-2 rounded-lg border text-xs text-white focus:outline-none" style="background-color: var(--bg-color, #0b0f19); border-color: var(--border-color, rgba(255, 255, 255, 0.15));" />
               </div>
 
               <div>
                 <label class="block text-[11px] font-semibold text-slate-300 mb-1">Mensaje para tus Clientes</label>
-                <textarea id="owner-notif-body" rows="3" placeholder="Escribe el mensaje claro y directo..." class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-white/10 text-xs text-white"></textarea>
+                <textarea id="owner-notif-body" rows="3" placeholder="Escribe el mensaje claro y directo..." class="w-full px-3 py-2 rounded-lg border text-xs text-white focus:outline-none" style="background-color: var(--bg-color, #0b0f19); border-color: var(--border-color, rgba(255, 255, 255, 0.15));"></textarea>
               </div>
 
               <div>
                 <label class="block text-[11px] font-semibold text-slate-300 mb-1">Enlace al tocar la Notificación</label>
-                <input type="text" id="owner-notif-url" placeholder="https://wa.me/..." class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-white/10 text-xs text-white" />
+                <input type="text" id="owner-notif-url" placeholder="https://wa.me/..." class="w-full px-3 py-2 rounded-lg border text-xs text-white focus:outline-none" style="background-color: var(--bg-color, #0b0f19); border-color: var(--border-color, rgba(255, 255, 255, 0.15));" />
               </div>
 
-              <button id="btn-send-owner-push" class="w-full py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 flex items-center justify-center gap-2 shadow-lg transition cursor-pointer">
+              <button id="btn-send-owner-push" class="w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition cursor-pointer hover:opacity-90 active:scale-95" style="background: linear-gradient(135deg, var(--accent-color, #eab308), var(--accent-text, #fef08a)); color: var(--bg-color, #0b0f19);">
                 <span>🚀 Enviar Notificación a mis Clientes</span>
               </button>
             </div>
 
             <!-- Panel Seguridad / Cambiar PIN -->
-            <div id="owner-panel-security" class="hidden space-y-3 p-3 rounded-xl bg-slate-950 border border-white/10 text-xs">
+            <div id="owner-panel-security" class="hidden space-y-3 p-3 rounded-xl border text-xs" style="background-color: var(--bg-color, #0b0f19); border-color: var(--border-color, rgba(255, 255, 255, 0.1));">
               <div>
                 <h4 class="font-bold text-white text-xs">Cambiar PIN de Acceso</h4>
                 <p class="text-[11px] text-slate-400 mt-0.5">Establece un código personal de 4 a 6 dígitos para proteger tu panel.</p>
@@ -464,7 +464,7 @@
 
               <p id="owner-pin-change-error" class="text-xs text-red-400 hidden"></p>
 
-              <button id="btn-save-new-pin" class="w-full py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow transition cursor-pointer">
+              <button id="btn-save-new-pin" class="w-full py-2 rounded-xl font-bold text-xs shadow transition cursor-pointer hover:opacity-90 active:scale-95" style="background-color: var(--accent-color, #eab308); color: var(--bg-color, #0b0f19);">
                 Guardar Nuevo PIN
               </button>
 
@@ -864,63 +864,116 @@
       });
     }
 
-    function setupNotifications() {
+        function setupNotifications() {
       const btnNotif = document.getElementById("btn-activate-notifications");
-      btnNotif.addEventListener("click", async () => {
-        if (!("Notification" in window)) {
-          showToast("Notificaciones no soportadas en este navegador");
-          return;
-        }
+      const notifLabel = document.getElementById("notif-btn-label");
+      const cardChannel = "tarjeta_" + ((CLIENT_CONFIG.personal.nfcId || CLIENT_CONFIG.personal.nombre || "pro")).toLowerCase().replace(/[^a-z0-9]/g, "_");
 
-        const triggerNotification = () => {
-          const { notificaciones } = CLIENT_CONFIG;
-          if (navigator.serviceWorker && navigator.serviceWorker.ready) {
-            navigator.serviceWorker.ready.then(reg => {
-              reg.showNotification(notificaciones.titulo, {
-                body: notificaciones.cuerpo,
-                icon: notificaciones.icono || "/icon.svg",
-                data: { url: notificaciones.urlDestino || window.location.href }
-              });
-              showToast("🔔 Notificación recibida en tu dispositivo");
-            });
-          } else {
-            new Notification(notificaciones.titulo, {
-              body: notificaciones.cuerpo,
-              icon: notificaciones.icono || "/icon.svg"
-            });
-            showToast("🔔 Notificación recibida en tu dispositivo");
-          }
-        };
-
-        if (Notification.permission === "granted") {
-          triggerNotification();
-        } else if (Notification.permission !== "denied") {
-          const perm = await Notification.requestPermission();
-          if (perm === "granted") {
-            showToast("✓ Notificaciones autorizadas en este dispositivo");
-            triggerNotification();
-
-            // Sincronizar suscripción Web Push con el servidor del dueño si está configurado
-            if (CLIENT_CONFIG.notificaciones.servidorPushEndpoint && "serviceWorker" in navigator) {
-              navigator.serviceWorker.ready.then(async (reg) => {
-                try {
-                  const sub = await reg.pushManager.subscribe({
-                    userVisibleOnly: true,
-                    applicationServerKey: "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U"
-                  });
-                  fetch(CLIENT_CONFIG.notificaciones.servidorPushEndpoint, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(sub)
-                  }).catch(() => {});
-                } catch(e) {}
-              });
-            }
+      function updateNotificationButtonState() {
+        if (!btnNotif) return;
+        const isGranted = (typeof Notification !== "undefined" && Notification.permission === "granted") && localStorage.getItem("tarjeta_notif_enabled") !== "false";
+        if (isGranted) {
+          btnNotif.className = "w-full py-2.5 px-3 rounded-lg text-xs font-bold border flex items-center justify-center gap-2 transition shadow-sm cursor-pointer";
+          btnNotif.style.backgroundColor = "rgba(16, 185, 129, 0.15)";
+          btnNotif.style.borderColor = "rgba(16, 185, 129, 0.4)";
+          btnNotif.style.color = "#34d399";
+          if (notifLabel) {
+            notifLabel.innerHTML = '<span class="flex items-center gap-1.5 justify-center"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Notificaciones Activas ✓</span>';
           }
         } else {
-          showToast("Notificaciones bloqueadas por el navegador");
+          btnNotif.className = "w-full py-2.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition border cursor-pointer";
+          btnNotif.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+          btnNotif.style.borderColor = "var(--border-color, rgba(255, 255, 255, 0.1))";
+          btnNotif.style.color = "#e2e8f0";
+          if (notifLabel) {
+            notifLabel.textContent = "Activar Notificaciones";
+          }
+        }
+      }
+
+      updateNotificationButtonState();
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) updateNotificationButtonState();
+      });
+
+      // Cross-Device Real-time Cloud Push Relay (PC -> Phone sin servidor propio)
+      if (typeof EventSource !== "undefined") {
+        try {
+          const sse = new EventSource("https://ntfy.sh/" + cardChannel + "/sse");
+          sse.onmessage = (event) => {
+            try {
+              const msg = JSON.parse(event.data);
+              if (msg.event === "message" && msg.message) {
+                const pushTitle = msg.title || ("Novedad de " + CLIENT_CONFIG.personal.nombre);
+                displayIncomingPush(pushTitle, msg.message, msg.click || window.location.href);
+              }
+            } catch(e) {}
+          };
+        } catch(err) {
+          console.warn("Cloud push SSE error:", err);
+        }
+      }
+
+      if (typeof BroadcastChannel !== "undefined") {
+        try {
+          const pushChannel = new BroadcastChannel("tarjeta_pwa_push_channel");
+          pushChannel.onmessage = (event) => {
+            if (event.data && event.data.titulo) {
+              displayIncomingPush(event.data.titulo, event.data.cuerpo, event.data.url);
+            }
+          };
+        } catch(e) {}
+      }
+
+      window.addEventListener("storage", (e) => {
+        if (e.key === "tarjeta_pwa_live_push" && e.newValue) {
+          try {
+            const data = JSON.parse(e.newValue);
+            if (data && data.titulo) {
+              displayIncomingPush(data.titulo, data.cuerpo, data.url);
+            }
+          } catch(err) {}
         }
       });
+
+      if (btnNotif) {
+        btnNotif.addEventListener("click", async () => {
+          if (!("Notification" in window)) {
+            showToast("⚠️ Notificaciones no soportadas en este navegador");
+            return;
+          }
+
+          if (Notification.permission === "granted") {
+            localStorage.setItem("tarjeta_notif_enabled", "true");
+            updateNotificationButtonState();
+            showToast("✓ Ya tienes las notificaciones activadas en este teléfono");
+            return;
+          }
+
+          if (Notification.permission !== "denied") {
+            let permission;
+            try {
+              permission = await Notification.requestPermission();
+            } catch(e) {
+              permission = await new Promise((resolve) => Notification.requestPermission(resolve));
+            }
+
+            if (permission === "granted") {
+              localStorage.setItem("tarjeta_notif_enabled", "true");
+              updateNotificationButtonState();
+              showToast("✓ ¡Notificaciones activadas!");
+              
+              const welcomeTitle = "🔔 ¡Conectado con " + CLIENT_CONFIG.personal.nombre + "!";
+              const welcomeBody = "Recibirás novedades y promociones directamente en tu teléfono.";
+              displayIncomingPush(welcomeTitle, welcomeBody, window.location.href);
+            } else {
+              showToast("Permiso de notificaciones no concedido");
+            }
+          } else {
+            showToast("⚠️ Notificaciones bloqueadas en los ajustes del teléfono");
+          }
+        });
+      }
     }
 
     function setupPWA() {
@@ -1097,7 +1150,7 @@
       btnCloseIOS.addEventListener("click", () => modalIOS.classList.add("hidden"));
     }
 
-    function setupOwnerModal() {
+        function setupOwnerModal() {
       const modal = document.getElementById("modal-owner-push");
       const btnOpenFooter = document.getElementById("btn-open-owner");
       const btnOpenNFC = document.getElementById("btn-owner-nfc");
@@ -1111,6 +1164,7 @@
       const notifTitle = document.getElementById("owner-notif-title");
       const notifBody = document.getElementById("owner-notif-body");
       const notifUrl = document.getElementById("owner-notif-url");
+      const cardChannel = "tarjeta_" + ((CLIENT_CONFIG.personal.nfcId || CLIENT_CONFIG.personal.nombre || "pro")).toLowerCase().replace(/[^a-z0-9]/g, "_");
 
       const getActivePin = () => {
         return localStorage.getItem("tarjetapro_owner_pin") || CLIENT_CONFIG.personal.pinAdmin || "1234";
@@ -1126,19 +1180,19 @@
       if (btnClose) btnClose.addEventListener("click", () => modal.classList.add("hidden"));
       modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.add("hidden"); });
 
-      // Verificar PIN
       btnSubmitPin.addEventListener("click", () => {
         if (pinInput.value === getActivePin()) {
           pinView.classList.add("hidden");
           composeView.classList.remove("hidden");
-          notifUrl.value = "https://wa.me/" + CLIENT_CONFIG.contacto.whatsapp;
+          if (!notifUrl.value) {
+            notifUrl.value = "https://wa.me/" + CLIENT_CONFIG.contacto.whatsapp;
+          }
         } else {
           pinError.classList.remove("hidden");
           pinInput.value = "";
         }
       });
 
-      // Pestañas internas: Difusión vs Seguridad
       const tabBroadcast = document.getElementById("btn-owner-tab-broadcast");
       const tabSecurity = document.getElementById("btn-owner-tab-security");
       const panelBroadcast = document.getElementById("owner-panel-broadcast");
@@ -1146,20 +1200,23 @@
 
       if (tabBroadcast && tabSecurity && panelBroadcast && panelSecurity) {
         tabBroadcast.addEventListener("click", () => {
-          tabBroadcast.className = "py-1.5 px-2 rounded-lg bg-amber-500 text-slate-950 font-bold transition";
-          tabSecurity.className = "py-1.5 px-2 rounded-lg text-slate-400 hover:text-white transition";
+          tabBroadcast.style.backgroundColor = "var(--accent-color, #eab308)";
+          tabBroadcast.style.color = "var(--bg-color, #0b0f19)";
+          tabSecurity.style.backgroundColor = "transparent";
+          tabSecurity.style.color = "#94a3b8";
           panelBroadcast.classList.remove("hidden");
           panelSecurity.classList.add("hidden");
         });
         tabSecurity.addEventListener("click", () => {
-          tabSecurity.className = "py-1.5 px-2 rounded-lg bg-amber-500 text-slate-950 font-bold transition";
-          tabBroadcast.className = "py-1.5 px-2 rounded-lg text-slate-400 hover:text-white transition";
+          tabSecurity.style.backgroundColor = "var(--accent-color, #eab308)";
+          tabSecurity.style.color = "var(--bg-color, #0b0f19)";
+          tabBroadcast.style.backgroundColor = "transparent";
+          tabBroadcast.style.color = "#94a3b8";
           panelSecurity.classList.remove("hidden");
           panelBroadcast.classList.add("hidden");
         });
       }
 
-      // Guardar Nuevo PIN
       const btnSavePin = document.getElementById("btn-save-new-pin");
       const newPinInput = document.getElementById("owner-new-pin-input");
       const confirmPinInput = document.getElementById("owner-confirm-pin-input");
@@ -1199,30 +1256,53 @@
         });
       }
 
-      // Enviar Notificación a Clientes
       btnSendPush.addEventListener("click", () => {
-        const title = notifTitle.value || "Novedad de " + CLIENT_CONFIG.personal.nombre;
-        const body = notifBody.value || "Tengo una nueva promoción para mis clientes.";
+        const title = (notifTitle.value && notifTitle.value.trim()) || ("Novedad de " + CLIENT_CONFIG.personal.nombre);
+        const body = (notifBody.value && notifBody.value.trim()) || "Tengo una nueva promoción exclusiva para ti.";
+        const url = (notifUrl.value && notifUrl.value.trim()) || ("https://wa.me/" + CLIENT_CONFIG.contacto.whatsapp);
 
         btnSendPush.disabled = true;
         btnSendPush.textContent = "Transmitiendo a los teléfonos...";
 
+        try {
+          fetch("https://ntfy.sh/" + cardChannel, {
+            method: "POST",
+            headers: {
+              "Title": title,
+              "Click": url,
+              "Tags": "bell,loudspeaker"
+            },
+            body: body
+          }).catch(e => console.warn("Cloud relay warning:", e));
+        } catch(e) {}
+
         setTimeout(() => {
-          if (Notification && Notification.permission === "granted") {
+          const payload = {
+            titulo: title,
+            cuerpo: body,
+            url: url,
+            timestamp: Date.now()
+          };
+
+          if (typeof BroadcastChannel !== "undefined") {
             try {
-              new Notification(title, { body: body, icon: "/icon.svg" });
-            } catch(e) {
-              if (navigator.serviceWorker && navigator.serviceWorker.ready) {
-                navigator.serviceWorker.ready.then(reg => reg.showNotification(title, { body: body, icon: "/icon.svg" }));
-              }
-            }
+              const pushChannel = new BroadcastChannel("tarjeta_pwa_push_channel");
+              pushChannel.postMessage(payload);
+              pushChannel.close();
+            } catch(e) {}
           }
 
-          showToast("🚀 ¡Notificación enviada a todos tus clientes!");
+          try {
+            localStorage.setItem("tarjeta_pwa_live_push", JSON.stringify(payload));
+          } catch(e) {}
+
+          displayIncomingPush(title, body, url);
+
+          showToast("🚀 ¡Notificación emitida con éxito a tus clientes!");
           btnSendPush.disabled = false;
           btnSendPush.textContent = "🚀 Enviar Notificación a mis Clientes";
           modal.classList.add("hidden");
-        }, 800);
+        }, 500);
       });
     }
 
