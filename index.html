@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Jorge Rodriguez · Tarjeta Digital</title>
+  <meta name="description" content="Diseño Gráfico y Digital en 7260 Design">
+  
+  <!-- Meta PWA & Mobile Web con nombre de titular para instalación -->
+  <meta name="theme-color" content="#f1f5f9">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Jorge Rodriguez">
+  <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1wZNZmsUlh76qDApWptGcbjteYegkK3TR">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
+  <link rel="manifest" id="app-manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Jorge%20Rodriguez%20%C2%B7%20Tarjeta%20Digital%22%2C%22short_name%22%3A%22Jorge%22%2C%22start_url%22%3A%22.%2F%22%2C%22scope%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%23f1f5f9%22%2C%22theme_color%22%3A%22%23f1f5f9%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Flh3.googleusercontent.com%2Fd%2F1wZNZmsUlh76qDApWptGcbjteYegkK3TR%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%2C%7B%22src%22%3A%22.%2Ficon-512.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%2C%7B%22src%22%3A%22.%2Ficon.svg%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+
+  <!-- Early PWA install prompt capture & fast Service Worker register -->
+  <script>
+    window.__pwaInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      window.__pwaInstallPrompt = e;
+      var banner = document.getElementById('pwa-install-banner');
+      if (banner) banner.classList.remove('hidden');
+    });
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(function() {
+        navigator.serviceWorker.register('/sw.js').catch(function() {});
+      });
+    }
+  </script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- QRCode.js CDN for standalone dynamic QR generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --bg-color: #f1f5f9;
+      --card-color: #ffffff;
+      --accent-color: #0f172a;
+      --accent-text: #334155;
+      --border-color: rgba(15, 23, 42, 0.12);
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      background-color: var(--bg-color);
+    }
+    .card-sheen {
+      position: relative;
+      overflow: hidden;
+    }
+    .card-sheen::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        60deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.05) 45%,
+        rgba(255, 255, 255, 0.12) 50%,
+        rgba(255, 255, 255, 0.05) 55%,
+        rgba(255, 255, 255, 0) 70%
+      );
+      transform: rotate(25deg);
+      pointer-events: none;
+      animation: sheenMove 6s infinite ease-in-out;
+    }
+    @keyframes sheenMove {
+      0% { transform: translateY(-80%) rotate(25deg); }
+      50% { transform: translateY(80%) rotate(25deg); }
+      100% { transform: translateY(-80%) rotate(25deg); }
+    }
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
+    .pt-safe { padding-top: env(safe-area-inset-top, 16px); }
+    .tab-content { transition: opacity 0.25s ease, transform 0.25s ease; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 9999px; }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex items-center justify-center p-0 sm:p-4 selection:bg-amber-500/30">
+
+  <!-- CONTENEDOR PRINCIPAL: SMART CARD PWA -->
+  <main id="app-container" class="w-full max-w-md min-h-screen sm:min-h-[860px] sm:max-h-[920px] bg-slate-900 sm:rounded-[36px] sm:border sm:border-white/10 sm:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] flex flex-col relative overflow-hidden" style="background-color: var(--card-color); border-color: var(--border-color);">
+    
+    <!-- Barra Superior: Chip NFC & Acciones Rápidas -->
+    <header class="pt-safe px-5 pt-4 pb-2 flex items-center justify-between border-b border-white/5 bg-slate-900/40 backdrop-blur-md sticky top-0 z-20">
+      <div class="flex items-center gap-2">
+        <button id="btn-owner-nfc" title="Acceso Dueño de la Tarjeta" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wider uppercase bg-white/5 border border-white/10 hover:border-amber-400/40 active:scale-95 transition" style="color: var(--accent-color);">
+          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 010-6.076M11.826 18.576a10.5 10.5 0 000-13.152M15.364 22.114a15.75 15.75 0 000-20.228" />
+          </svg>
+          <span id="badge-nfc-id">NFC-84920-AGP</span>
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="btn-open-qr" aria-label="Abrir Código QR" class="w-9 h-9 rounded-full bg-slate-800/80 hover:bg-slate-700 active:scale-95 text-slate-300 hover:text-white border border-white/10 flex items-center justify-center transition shadow-sm">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+          </svg>
+        </button>
+
+        <button id="btn-share-card" aria-label="Compartir Tarjeta" class="w-9 h-9 rounded-full bg-slate-800/80 hover:bg-slate-700 active:scale-95 text-slate-300 hover:text-white border border-white/10 flex items-center justify-center transition shadow-sm">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Scrollable Body -->
+    <div class="flex-1 overflow-y-auto px-5 py-4 space-y-5 pb-24">
+
+      <!-- 1. BLOQUE DE PERFIL -->
+      <section class="card-sheen rounded-2xl bg-gradient-to-b from-slate-800/70 to-slate-900/90 border border-white/10 p-5 shadow-lg relative">
+        <div class="flex flex-col items-center text-center">
+          
+          <div class="relative mb-3.5">
+            <div id="avatar-ring" class="w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 shadow-lg" style="background: linear-gradient(135deg, var(--accent-color), #ffffff, var(--accent-color));">
+              <img id="avatar-img" src="https://lh3.googleusercontent.com/d/1wZNZmsUlh76qDApWptGcbjteYegkK3TR" alt="Foto de Perfil" referrerpolicy="no-referrer" class="w-full h-full object-cover rounded-full bg-slate-800 border-2 border-slate-950">
+            </div>
+            <div id="verified-badge" class=" absolute bottom-0 right-0 w-7 h-7 rounded-full flex items-center justify-center text-slate-950 border-2 border-slate-900 shadow" style="background-color: var(--accent-color);">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+
+          <h1 id="profile-name" class="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-1.5 justify-center">
+            Jorge Rodriguez
+          </h1>
+
+          <p id="profile-role" class="text-xs sm:text-sm font-medium mt-0.5 tracking-wide" style="color: var(--accent-color);">
+            Diseño Gráfico y Digital
+          </p>
+
+          <p id="profile-company" class="text-xs font-semibold text-slate-400 tracking-wider uppercase mt-1">
+            7260 Design
+          </p>
+
+          <p id="profile-bio" class="text-xs sm:text-sm text-slate-300/90 mt-2.5 max-w-xs leading-relaxed">
+            Soluciones visuales y digitales para empresas y comercios. Diseño Gráfico, Diseño Web y Digital, Carteleria, Ploteos y Desarrollos especiales. 
+          </p>
+        </div>
+      </section>
+
+      <!-- 2. CTAs PRINCIPALES -->
+      <section class="grid grid-cols-2 gap-3">
+        <button id="btn-save-vcard" class="h-12 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-[0.98]" style="background-color: var(--accent-color); color: var(--bg-color);">
+          <svg class="w-4 h-4 stroke-[2.2]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
+          </svg>
+          <span class="truncate">Guardar Contacto</span>
+        </button>
+
+        <a id="btn-open-whatsapp" href="#" target="_blank" rel="noopener noreferrer" class="h-12 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 active:scale-[0.98] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+          </svg>
+          <span class="truncate">WhatsApp Directo</span>
+        </a>
+      </section>
+
+      <!-- 3. TABS SEGMENTADOS -->
+      <nav id="tabs-container" class="bg-slate-900/90 border border-white/10 p-1 rounded-xl flex items-center gap-1 shadow-inner hidden">
+        <button id="tab-btn-contact" class="flex-1 py-2 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center justify-center gap-1.5 shadow" style="background-color: var(--accent-color); color: var(--bg-color);">
+          <svg class="w-3.5 h-3.5 stroke-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+          </svg>
+          <span>Contacto & Redes</span>
+        </button>
+        <button id="tab-btn-catalog" class="flex-1 py-2 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center justify-center gap-1.5 text-slate-400 hover:text-white">
+          <svg class="w-3.5 h-3.5 stroke-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+          </svg>
+          <span id="tab-catalog-badge">Catálogo & Servicios</span>
+        </button>
+      </nav>
+
+      <!-- PESTAÑA CONTACTO -->
+      <section id="panel-contact" class="tab-content space-y-3">
+        <div id="contact-list" class="space-y-2.5"></div>
+
+        <div id="location-card" class="rounded-xl bg-slate-900/60 border border-white/10 p-3.5 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-0.5" style="color: var(--accent-color);">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+            </svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Ubicación</p>
+            <p id="location-text" class="text-xs text-slate-200 mt-0.5 leading-relaxed truncate">Av. Saavedra 2454, Saladillo, Buenos Aires, Argentina</p>
+            <a id="location-link" href="https://maps.google.com/?q=Av.%20Saavedra%202454%2C%20Saladillo%2C%20Buenos%20Aires%2C%20Argentina" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] font-semibold mt-1" style="color: var(--accent-color);">
+              <span>Abrir en Google Maps</span>
+              <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- PESTAÑA CATÁLOGO -->
+      <section id="panel-catalog" class="tab-content hidden space-y-3.5">
+        <div class="flex items-center justify-between px-1">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Servicios & Soluciones</p>
+          <span id="catalog-count" class="text-[11px] font-medium" style="color: var(--accent-color);">3 Disponibles</span>
+        </div>
+        <div id="catalog-list" class="space-y-3"></div>
+      </section>
+
+      <!-- 4. PWA NOTIFICACIONES -->
+      <section class="rounded-xl bg-gradient-to-br from-slate-900/90 to-slate-950 border border-white/10 p-4 space-y-3">
+        <div class="flex items-start gap-3">
+          <div class="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0" style="color: var(--accent-color);">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="text-xs font-bold text-white">Novedades & Notificaciones Push</h4>
+            <p class="text-[11px] text-slate-400 mt-0.5 leading-snug">Recibe avisos directos de nuevas ofertas, conferencias o promociones especiales.</p>
+          </div>
+        </div>
+
+        <button id="btn-activate-notifications" class="w-full py-2.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-xs font-semibold text-slate-200 border border-white/10 flex items-center justify-center gap-2 transition">
+          <svg class="w-3.5 h-3.5" style="color: var(--accent-color);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+          </svg>
+          <span id="notif-btn-label">Activar Notificaciones</span>
+        </button>
+      </section>
+
+      <footer class="text-center pt-2 pb-1 space-y-1">
+        <p class="text-[10px] text-slate-500 font-medium">Tarjeta Inteligente PWA · Powered by Aura SmartCard Engine</p>
+        <button id="btn-open-owner" class="text-[10px] text-slate-500/70 hover:text-amber-400 transition inline-flex items-center gap-1 cursor-pointer">
+          <span>🔒</span>
+          <span>Acceso Dueño (con PIN)</span>
+        </button>
+      </footer>
+    </div>
+
+    <!-- PWA BARRA INFERIOR -->
+    <div id="pwa-install-banner" class="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-3.5 bg-slate-900/95 backdrop-blur-md border-t border-white/10 flex items-center justify-between z-30 pb-safe shadow-2xl">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0" style="color: var(--accent-color);">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect>
+            <path d="M12 18h.01"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <p class="text-xs font-bold text-white">Llévala en tu teléfono</p>
+            <span id="install-device-badge" class="px-1.5 py-0.5 rounded text-[9px] font-bold border hidden" style="background-color: rgba(234, 179, 8, 0.15); color: var(--accent-color); border-color: rgba(234, 179, 8, 0.3);"></span>
+          </div>
+          <p class="text-[10px] text-slate-400">Instalación directa en tu pantalla de inicio</p>
+        </div>
+      </div>
+      <button id="btn-install-pwa" class="px-3.5 py-2 rounded-xl font-bold text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer active:scale-95" style="background-color: var(--accent-color); color: var(--bg-color);">
+        <svg class="w-3.5 h-3.5 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+        </svg>
+        <span id="btn-install-label">Instalar de una</span>
+      </button>
+    </div>
+
+    <!-- MODAL QR -->
+    <div id="modal-qr" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+      <div class="w-full max-w-xs bg-slate-900 border border-white/10 rounded-2xl p-5 text-center shadow-2xl relative space-y-4">
+        <button id="btn-close-qr" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+          ✕
+        </button>
+        <div>
+          <h3 class="text-base font-bold text-white">Escanear Tarjeta</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Apunta con la cámara de cualquier teléfono</p>
+        </div>
+        <div class="bg-white p-3.5 rounded-xl inline-block shadow-inner mx-auto" id="qrcode-container"></div>
+        <button id="btn-copy-url" class="w-full py-2 px-3 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition" style="background-color: var(--accent-color); color: var(--bg-color);">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span id="copy-url-label">Copiar Enlace Directo</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL INSTALACIÓN TELÉFONO -->
+    <div id="modal-ios-guide" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="w-full max-w-sm bg-slate-900 border-t sm:border border-white/10 rounded-t-3xl sm:rounded-2xl p-6 text-center shadow-2xl space-y-4 pb-safe">
+        <div class="w-12 h-1.5 bg-slate-700 rounded-full mx-auto sm:hidden"></div>
+        
+        <!-- VISTA iPhone -->
+        <div id="modal-ios-view" class="hidden space-y-3">
+          <div class="w-11 h-11 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center mx-auto mb-2">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect>
+              <path d="M12 18h.01"></path>
+            </svg>
+          </div>
+          <div class="inline-block px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-300 text-[10px] font-bold uppercase tracking-wider mb-1">
+            iPhone / iPad Detectado
+          </div>
+          <h3 class="text-base font-bold text-white">Llévala en tu iPhone</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Añádela a tu pantalla de inicio en 2 toques rápidos:</p>
+          <div class="text-left space-y-2.5 text-xs text-slate-300 mt-3">
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/70 border border-white/5">
+              <span class="w-6 h-6 rounded-full font-bold flex items-center justify-center text-xs shrink-0" style="background-color: var(--accent-color); color: var(--bg-color);">1</span>
+              <p>Toca el icono <strong class="text-white">Compartir</strong> (caja con flecha hacia arriba) en Safari.</p>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/70 border border-white/5">
+              <span class="w-6 h-6 rounded-full font-bold flex items-center justify-center text-xs shrink-0" style="background-color: var(--accent-color); color: var(--bg-color);">2</span>
+              <p>Toca <strong class="text-white">"Añadir a pantalla de inicio"</strong> y luego <strong class="text-white">Añadir</strong>.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- VISTA Android / Otros -->
+        <div id="modal-android-view" class="hidden space-y-3">
+          <div class="w-11 h-11 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center mx-auto mb-2">
+            <svg class="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+          </div>
+          <div id="modal-android-badge" class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 text-[10px] font-bold uppercase tracking-wider mb-1">
+            Teléfono Android Detectado
+          </div>
+          <h3 class="text-base font-bold text-white">Instalación Directa en 1 Toque</h3>
+          <p id="modal-android-desc" class="text-xs text-slate-400 mt-0.5">
+            Instala la tarjeta como app nativa en tu pantalla de inicio sin descargas pesadas.
+          </p>
+          <button id="btn-modal-direct-install" class="w-full mt-3 py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition active:scale-95 cursor-pointer" style="background-color: var(--accent-color); color: var(--bg-color);">
+            <svg class="w-4 h-4 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            <span id="btn-modal-direct-label">Instalar Tarjeta Ahora</span>
+          </button>
+
+          <div id="android-manual-steps-box" class="hidden mt-3 p-3 rounded-xl bg-slate-800/80 border border-white/10 text-left space-y-2 text-xs">
+            <p class="font-bold text-amber-300 text-[11px]">Pasos para añadirla en Chrome:</p>
+            <div class="flex items-start gap-2.5 text-slate-200">
+              <span class="w-5 h-5 rounded-full bg-amber-500 text-slate-950 font-bold flex items-center justify-center text-[10px] shrink-0 mt-0.5">1</span>
+              <span>Toca el menú de <strong>tres puntos (⋮)</strong> arriba a la derecha en Chrome.</span>
+            </div>
+            <div class="flex items-start gap-2.5 text-slate-200">
+              <span class="w-5 h-5 rounded-full bg-amber-500 text-slate-950 font-bold flex items-center justify-center text-[10px] shrink-0 mt-0.5">2</span>
+              <span>Toca <strong>"Instalar aplicación"</strong> (o "Añadir a la pantalla de inicio").</span>
+            </div>
+            <p class="text-[10px] text-slate-400 pt-1">💡 Si ya la instalaste antes, ¡ya está disponible en tu pantalla de inicio!</p>
+          </div>
+
+          <div class="mt-2">
+            <button id="btn-modal-show-manual" type="button" class="text-[11px] text-amber-400 hover:text-amber-300 font-semibold underline cursor-pointer">
+              ¿No se abre la ventana? Ver cómo añadirla en 2 pasos
+            </button>
+          </div>
+        </div>
+
+        <button id="btn-close-ios" class="w-full py-2.5 rounded-xl bg-slate-800 text-slate-200 text-xs font-semibold hover:bg-slate-700">Entendido</button>
+      </div>
+    </div>
+
+    <!-- MODAL DUEÑO: CONSOLA DE DIFUSIÓN PUSH CON PIN -->
+    <div id="modal-owner-push" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="w-full max-w-md rounded-t-3xl sm:rounded-2xl bg-slate-900 border-t sm:border border-white/10 shadow-2xl relative max-h-[92vh] flex flex-col overflow-hidden">
+        
+        <div class="p-4 border-b border-white/10 flex items-center justify-between bg-slate-950/80">
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-bold">🔒</span>
+            <div>
+              <h3 class="text-xs font-bold text-white uppercase tracking-wider">Consola del Dueño</h3>
+              <p class="text-[10px] text-slate-400">Emite novedades a tus clientes</p>
+            </div>
+          </div>
+          <button id="btn-close-owner" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">✕</button>
+        </div>
+
+        <div class="p-5 overflow-y-auto space-y-4">
+          <!-- Paso 1: PIN -->
+          <div id="owner-pin-view" class="text-center py-5 space-y-3">
+            <p class="text-sm font-bold text-white">Ingresa tu PIN de Dueño</p>
+            <p class="text-xs text-slate-400 max-w-xs mx-auto">Solo tú como dueño de la tarjeta puedes emitir novedades a los clientes que la guardaron.</p>
+            <input type="password" id="owner-pin-input" maxlength="6" placeholder="PIN (por defecto: 1234)" class="w-44 text-center text-lg font-bold tracking-widest px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white focus:outline-none focus:border-amber-400 mx-auto block" />
+            <p id="owner-pin-error" class="text-xs text-red-400 hidden">PIN incorrecto. Intenta con 1234.</p>
+            <button id="btn-submit-owner-pin" class="w-44 py-2 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 mx-auto block">Desbloquear</button>
+          </div>
+
+          <!-- Paso 2: Redacción y envío / Cambio de PIN -->
+          <div id="owner-compose-view" class="hidden space-y-3">
+            <!-- Pestañas internas del dueño -->
+            <div class="grid grid-cols-2 gap-1.5 bg-slate-950 p-1 rounded-xl border border-white/10 text-xs font-semibold">
+              <button id="btn-owner-tab-broadcast" type="button" class="py-1.5 px-2 rounded-lg bg-amber-500 text-slate-950 font-bold transition">
+                📢 Emitir Difusión
+              </button>
+              <button id="btn-owner-tab-security" type="button" class="py-1.5 px-2 rounded-lg text-slate-400 hover:text-white transition">
+                🔐 Cambiar PIN
+              </button>
+            </div>
+
+            <!-- Panel Difusión -->
+            <div id="owner-panel-broadcast" class="space-y-3">
+              <div class="flex items-center justify-between p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs">
+                <span class="text-slate-300">Clientes que recibirán el aviso:</span>
+                <span id="owner-subs-count" class="font-bold text-amber-400">64 conectados</span>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Título</label>
+                <input type="text" id="owner-notif-title" placeholder="Ej: 🔥 Nueva promoción exclusiva" class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-white/10 text-xs text-white" />
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Mensaje para tus Clientes</label>
+                <textarea id="owner-notif-body" rows="3" placeholder="Escribe el mensaje claro y directo..." class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-white/10 text-xs text-white"></textarea>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Enlace al tocar la Notificación</label>
+                <input type="text" id="owner-notif-url" placeholder="https://wa.me/..." class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-white/10 text-xs text-white" />
+              </div>
+
+              <button id="btn-send-owner-push" class="w-full py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 flex items-center justify-center gap-2 shadow-lg transition cursor-pointer">
+                <span>🚀 Enviar Notificación a mis Clientes</span>
+              </button>
+            </div>
+
+            <!-- Panel Seguridad / Cambiar PIN -->
+            <div id="owner-panel-security" class="hidden space-y-3 p-3 rounded-xl bg-slate-950 border border-white/10 text-xs">
+              <div>
+                <h4 class="font-bold text-white text-xs">Cambiar PIN de Acceso</h4>
+                <p class="text-[11px] text-slate-400 mt-0.5">Establece un código personal de 4 a 6 dígitos para proteger tu panel.</p>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nuevo PIN (4 a 6 dígitos)</label>
+                <input type="password" id="owner-new-pin-input" maxlength="6" placeholder="Ej: 5824" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-white/10 text-white font-mono tracking-widest text-center text-sm" />
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Confirmar Nuevo PIN</label>
+                <input type="password" id="owner-confirm-pin-input" maxlength="6" placeholder="Repite tu clave" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-white/10 text-white font-mono tracking-widest text-center text-sm" />
+              </div>
+
+              <p id="owner-pin-change-error" class="text-xs text-red-400 hidden"></p>
+
+              <button id="btn-save-new-pin" class="w-full py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow transition cursor-pointer">
+                Guardar Nuevo PIN
+              </button>
+
+              <div class="pt-2 border-t border-white/10 flex items-center justify-between">
+                <span class="text-[10px] text-slate-500">¿Deseas volver al inicial?</span>
+                <button id="btn-reset-owner-pin" type="button" class="text-[11px] text-slate-400 hover:text-amber-400 underline transition cursor-pointer">
+                  Restablecer a 1234
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast-message" class="fixed top-5 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-xs font-bold shadow-xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2" style="background-color: var(--accent-color); color: var(--bg-color);">
+      <span id="toast-text">Mensaje</span>
+    </div>
+  </main>
+
+  <!-- SCRIPT MAESTRO CON JSON DE CLIENTE EDITABLE -->
+  <script>
+    /**
+     * =========================================================================
+     * [CONFIGURACIÓN DEL CLIENTE - EDITABLE EXCLUSIVAMENTE POR EL VENDEDOR]
+     * Modifica únicamente las propiedades de este objeto JSON.
+     * Toda la tarjeta, la descarga de vCard .vcf, WhatsApp y el catálogo se
+     * actualizarán automáticamente sin tocar una sola línea de código interno.
+     * =========================================================================
+     */
+    const CLIENT_CONFIG = {
+  "personal": {
+    "nombre": "Jorge",
+    "apellidos": "Rodriguez",
+    "cargo": "Diseño Gráfico y Digital",
+    "empresa": "7260 Design",
+    "bio": "Soluciones visuales y digitales para empresas y comercios. Diseño Gráfico, Diseño Web y Digital, Carteleria, Ploteos y Desarrollos especiales. ",
+    "fotoPerfil": "https://lh3.googleusercontent.com/d/1wZNZmsUlh76qDApWptGcbjteYegkK3TR",
+    "insigniaVerificada": true,
+    "nfcId": "NFC-84920-AGP",
+    "pinAdmin": "1234",
+    "urlTarjetaPublica": ""
+  },
+  "contacto": {
+    "telefono": "+54 9 2344 467244",
+    "telefonoLimpio": "525584921034",
+    "whatsapp": "5492344467244",
+    "mensajeWhatsApp": "Hola Jorge, vi tu Tarjeta Digital y me gustaría contartarme.",
+    "email": "7260.design@gmail.com",
+    "sitioWeb": "",
+    "ubicacion": "Av. Saavedra 2454, Saladillo, Buenos Aires, Argentina",
+    "mapsUrl": "https://maps.google.com/?q=Av.%20Saavedra%202454%2C%20Saladillo%2C%20Buenos%20Aires%2C%20Argentina"
+  },
+  "redesSociales": [
+    {
+      "id": "instagram",
+      "red": "Instagram",
+      "usuario": "@7260_design",
+      "url": "https://instagram.com/sofia.auraglobal",
+      "color": "#e1306c",
+      "icono": "instagram"
+    },
+    {
+      "id": "email",
+      "red": "Correo Corporativo",
+      "usuario": "7260.design@gmail.com",
+      "url": "mailto:7260.design@gmail.com",
+      "color": "#ea4335",
+      "icono": "mail"
+    }
+  ],
+  "mostrarCatalogo": false,
+  "catalogo": [
+    {
+      "id": "serv-1",
+      "titulo": "Consultoría Estratégica 360°",
+      "descripcion": "Diagnóstico profundo, reestructuración operativa y plan integral de aceleración comercial para Q3/Q4.",
+      "precio": "$1,800 USD",
+      "etiqueta": "Más Solicitado",
+      "imagen": "/src/assets/images/service_business_consulting_1792791741842.jpg",
+      "mensajeWhatsApp": "Hola Sofía, me interesa solicitar disponibilidad para una sesión de Consultoría Estratégica 360°."
+    },
+    {
+      "id": "serv-2",
+      "titulo": "Branding Ejecutivo & Identidad Digital",
+      "descripcion": "Diseño de marca personal para C-Levels, dossier corporativo de alta gama y posicionamiento en medios.",
+      "precio": "$1,200 USD",
+      "etiqueta": "Alta Gama",
+      "imagen": "/src/assets/images/service_digital_branding_1792791742744.jpg",
+      "mensajeWhatsApp": "Hola Sofía, quisiera consultar sobre el paquete de Branding Ejecutivo & Identidad Digital."
+    },
+    {
+      "id": "serv-3",
+      "titulo": "Mentoring & Coaching VIP One-on-One",
+      "descripcion": "Acompañamiento directivo mensual en toma de decisiones críticas, liderazgo y gobernanza institucional.",
+      "precio": "$950 USD / mes",
+      "etiqueta": "Plazas Limitadas",
+      "imagen": "/src/assets/images/service_executive_coaching_1792791743101.jpg",
+      "mensajeWhatsApp": "Hola Sofía, quiero conocer la disponibilidad para el programa de Mentoring One-on-One."
+    }
+  ],
+  "tema": {
+    "id": "pearl-luxury",
+    "nombreTema": "Minimalist Pearl White",
+    "colorFondo": "#f1f5f9",
+    "colorTarjeta": "#ffffff",
+    "colorBorde": "rgba(15, 23, 42, 0.12)",
+    "colorAcento": "#0f172a",
+    "colorTextoAcento": "#334155",
+    "colorGradienteA": "#ffffff",
+    "colorGradienteB": "#f8fafc",
+    "colorBotonPrimario": "#0f172a",
+    "colorBotonTexto": "#ffffff"
+  },
+  "notificaciones": {
+    "titulo": "AURA Global · Novedad Exclusiva",
+    "cuerpo": "Sofía ha liberado 2 nuevas vacantes de consultoría estratégica. ¡Toca para agendar!",
+    "icono": "/icon.svg",
+    "urlDestino": "https://wa.me/525584921034",
+    "servidorPushEndpoint": "/api/push/subscribe",
+    "oneSignalAppId": "",
+    "canalDifusionUrl": "https://chat.whatsapp.com/ejemplo"
+  }
+};
+
+    /**
+     * LÓGICA DE EJECUCIÓN DINÁMICA
+     */
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCardData();
+      setupTabs();
+      setupVCardDownload();
+      setupWhatsApp();
+      setupQRModal();
+      setupShare();
+      setupNotifications();
+      setupPWA();
+      setupOwnerModal();
+    });
+
+    function renderCardData() {
+      const { personal, contacto, redesSociales, catalogo } = CLIENT_CONFIG;
+
+      // Avatar Fallback Protector
+      const avatarEl = document.getElementById("avatar-img");
+      if (avatarEl) {
+        avatarEl.onerror = function() {
+          if (!this.dataset.fallbackApplied) {
+            this.dataset.fallbackApplied = "true";
+            this.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80";
+          }
+        };
+      }
+
+      // Visibilidad de Catálogo & Servicios
+      const tabsNav = document.getElementById("tabs-container");
+      const panelContact = document.getElementById("panel-contact");
+      const panelCatalog = document.getElementById("panel-catalog");
+      if (CLIENT_CONFIG.mostrarCatalogo === false) {
+        if (tabsNav) tabsNav.classList.add("hidden");
+        if (panelCatalog) panelCatalog.classList.add("hidden");
+        if (panelContact) panelContact.classList.remove("hidden");
+      } else {
+        if (tabsNav) tabsNav.classList.remove("hidden");
+      }
+
+      // Contact List
+      const contactList = document.getElementById("contact-list");
+      contactList.innerHTML = "";
+
+      const phoneItem = document.createElement("a");
+      phoneItem.href = "tel:" + (contacto.telefonoLimpio || contacto.telefono);
+      phoneItem.className = "flex items-center justify-between p-3 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 active:scale-[0.99] border border-white/5 transition shadow-sm group";
+      phoneItem.innerHTML = `
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
+          </div>
+          <div>
+            <p class="text-[11px] font-semibold text-slate-400">Llamada Directa</p>
+            <p class="text-xs font-bold text-white tracking-wide">${contacto.telefono}</p>
+          </div>
+        </div>
+        <span class="text-[11px] text-amber-400 font-semibold group-hover:translate-x-0.5 transition-transform">Llamar →</span>
+      `;
+      contactList.appendChild(phoneItem);
+
+    function getSocialIconSvg(id, redName) {
+      const k = ((id || '') + ' ' + (redName || '')).toLowerCase();
+      if (k.includes('linkedin')) {
+        return '<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>';
+      }
+      if (k.includes('instagram')) {
+        return '<svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>';
+      }
+      if (k.includes('facebook')) {
+        return '<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M9 8H6v4h3v12h5V12h3.642L18 8h-4V6.333C14 5.374 14.5 5 15.5 5H18V0h-3.808C10.595 0 9 1.582 9 4.615V8z"/></svg>';
+      }
+      if (k.includes('tiktok')) {
+        return '<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.89 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.52a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3 15.67 6.34 6.34 0 0 0 9.34 22a6.34 6.34 0 0 0 6.34-6.33V9.06a8.16 8.16 0 0 0 4.91 1.63v-3.46a4.85 4.85 0 0 1-1-.54z"/></svg>';
+      }
+      if (k.includes('twitter') || k.includes(' x') || k === 'x') {
+        return '<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>';
+      }
+      if (k.includes('youtube')) {
+        return '<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>';
+      }
+      if (k.includes('telegram')) {
+        return '<svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg>';
+      }
+      if (k.includes('email') || k.includes('correo') || k.includes('mail')) {
+        return '<svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>';
+      }
+      if (k.includes('web') || k.includes('portal') || k.includes('sitio')) {
+        return '<svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>';
+      }
+      return '<svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>';
+    }
+
+      redesSociales.forEach(red => {
+        const item = document.createElement("a");
+        item.href = red.url;
+        item.target = "_blank";
+        item.rel = "noopener noreferrer";
+        item.className = "flex items-center justify-between p-3 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 active:scale-[0.99] border border-white/5 transition shadow-sm group";
+        item.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-slate-800 border border-white/10 text-slate-300 group-hover:text-amber-400 flex items-center justify-center transition-colors">
+              ${getSocialIconSvg(red.id, red.red)}
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold text-slate-400">${red.red}</p>
+              <p class="text-xs font-bold text-white truncate max-w-[200px]">${red.usuario}</p>
+            </div>
+          </div>
+          <span class="text-[11px] text-slate-400 group-hover:text-amber-400 font-semibold transition-colors">Abrir ↗</span>
+        `;
+        contactList.appendChild(item);
+      });
+
+      // Catalog List
+      const catalogList = document.getElementById("catalog-list");
+      catalogList.innerHTML = "";
+      catalogo.forEach(prod => {
+        const prodCard = document.createElement("article");
+        prodCard.className = "rounded-xl bg-slate-900/70 border border-white/10 overflow-hidden shadow-md flex flex-col";
+        const waMsg = encodeURIComponent(prod.mensajeWhatsApp || ("Hola " + personal.nombre + ", me interesa información sobre " + prod.titulo));
+        const waUrl = "https://wa.me/" + contacto.whatsapp + "?text=" + waMsg;
+
+        prodCard.innerHTML = `
+          <div class="h-32 w-full relative overflow-hidden bg-slate-800">
+            <img src="${prod.imagen}" alt="${prod.titulo}" class="w-full h-full object-cover">
+            ${prod.etiqueta ? '<span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-amber-500 text-slate-950 font-bold text-[10px] uppercase tracking-wider shadow">' + prod.etiqueta + '</span>' : ''}
+          </div>
+          <div class="p-3.5 flex flex-col flex-1 justify-between space-y-3">
+            <div>
+              <div class="flex items-start justify-between gap-2">
+                <h4 class="text-xs font-bold text-white">${prod.titulo}</h4>
+                ${prod.precio ? '<span class="text-xs font-extrabold text-amber-400 shrink-0">' + prod.precio + '</span>' : ''}
+              </div>
+              <p class="text-[11px] text-slate-300/80 mt-1.5 leading-relaxed">${prod.descripcion}</p>
+            </div>
+            <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="w-full py-2 px-3 rounded-lg bg-emerald-500/15 hover:bg-emerald-500 text-emerald-400 hover:text-white border border-emerald-500/30 text-[11px] font-bold flex items-center justify-center gap-1.5 transition active:scale-[0.98]">
+              <span>Consultar por WhatsApp</span>
+            </a>
+          </div>
+        `;
+        catalogList.appendChild(prodCard);
+      });
+
+      // Ubicación Dinámica en Google Maps
+      const locText = document.getElementById("location-text");
+      const locLink = document.getElementById("location-link");
+      if (locText) locText.textContent = contacto.ubicacion;
+      if (locLink) locLink.href = (contacto.ubicacion && contacto.ubicacion.trim())
+        ? ("https://maps.google.com/?q=" + encodeURIComponent(contacto.ubicacion))
+        : (contacto.mapsUrl || "#");
+    }
+
+    function setupTabs() {
+      const tabContact = document.getElementById("tab-btn-contact");
+      const tabCatalog = document.getElementById("tab-btn-catalog");
+      const panelContact = document.getElementById("panel-contact");
+      const panelCatalog = document.getElementById("panel-catalog");
+
+      tabContact.addEventListener("click", () => {
+        tabContact.style.backgroundColor = "var(--accent-color)";
+        tabContact.style.color = "var(--bg-color)";
+        tabCatalog.style.backgroundColor = "transparent";
+        tabCatalog.style.color = "#94a3b8";
+        panelContact.classList.remove("hidden");
+        panelCatalog.classList.add("hidden");
+      });
+
+      tabCatalog.addEventListener("click", () => {
+        tabCatalog.style.backgroundColor = "var(--accent-color)";
+        tabCatalog.style.color = "var(--bg-color)";
+        tabContact.style.backgroundColor = "transparent";
+        tabContact.style.color = "#94a3b8";
+        panelCatalog.classList.remove("hidden");
+        panelContact.classList.add("hidden");
+      });
+    }
+
+    function setupVCardDownload() {
+      const btnSave = document.getElementById("btn-save-vcard");
+      btnSave.addEventListener("click", () => {
+        const { personal, contacto } = CLIENT_CONFIG;
+        const lines = [
+          "BEGIN:VCARD",
+          "VERSION:3.0",
+          "N:" + (personal.apellidos || "") + ";" + (personal.nombre || "") + ";;;",
+          "FN:" + (personal.nombre + " " + personal.apellidos).trim(),
+          "ORG:" + (personal.empresa || ""),
+          "TITLE:" + (personal.cargo || ""),
+          "TEL;TYPE=CELL,VOICE:" + (contacto.telefonoLimpio || contacto.telefono || ""),
+          "EMAIL;TYPE=PREF,INTERNET:" + (contacto.email || ""),
+          "URL;TYPE=WORK:" + (contacto.sitioWeb || ""),
+          "ADR;TYPE=WORK:;;" + (contacto.ubicacion || "") + ";;;;",
+          "NOTE:" + (personal.bio || ""),
+          "END:VCARD"
+        ];
+        const blob = new Blob([lines.join("\r\n")], { type: "text/vcard;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = ((personal.nombre + "_" + personal.apellidos).toLowerCase().replace(/[^a-z0-9]/g, "_") || "contacto") + ".vcf";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast("✓ Archivo de Contacto (.vcf) generado");
+      });
+    }
+
+    function setupWhatsApp() {
+      const { contacto } = CLIENT_CONFIG;
+      const btnWa = document.getElementById("btn-open-whatsapp");
+      const cleanNumber = contacto.whatsapp.replace(/[^0-9]/g, "");
+      const encodedMsg = encodeURIComponent(contacto.mensajeWhatsApp);
+      btnWa.href = "https://wa.me/" + cleanNumber + "?text=" + encodedMsg;
+    }
+
+    function setupQRModal() {
+      const btnOpenQR = document.getElementById("btn-open-qr");
+      const btnCloseQR = document.getElementById("btn-close-qr");
+      const modalQR = document.getElementById("modal-qr");
+      const qrContainer = document.getElementById("qrcode-container");
+      const btnCopyUrl = document.getElementById("btn-copy-url");
+      let qrcodeInstance = null;
+
+      btnOpenQR.addEventListener("click", () => {
+        modalQR.classList.remove("hidden");
+        const currentUrl = (CLIENT_CONFIG.personal.urlTarjetaPublica && CLIENT_CONFIG.personal.urlTarjetaPublica.trim()) || window.location.href;
+        if (!qrcodeInstance && typeof QRCode !== 'undefined') {
+          qrContainer.innerHTML = "";
+          qrcodeInstance = new QRCode(qrContainer, {
+            text: currentUrl,
+            width: 180,
+            height: 180,
+            colorDark: "#0f172a",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          });
+        }
+      });
+
+      btnCloseQR.addEventListener("click", () => modalQR.classList.add("hidden"));
+      modalQR.addEventListener("click", (e) => { if (e.target === modalQR) modalQR.classList.add("hidden"); });
+
+      btnCopyUrl.addEventListener("click", () => {
+        const currentUrl = (CLIENT_CONFIG.personal.urlTarjetaPublica && CLIENT_CONFIG.personal.urlTarjetaPublica.trim()) || window.location.href;
+        navigator.clipboard.writeText(currentUrl).then(() => {
+          showToast("✓ Enlace copiado al portapapeles");
+        });
+      });
+    }
+
+    function setupShare() {
+      const btnShare = document.getElementById("btn-share-card");
+      btnShare.addEventListener("click", async () => {
+        const { personal } = CLIENT_CONFIG;
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: "Tarjeta Digital de " + personal.nombre + " " + personal.apellidos,
+              text: personal.cargo + " en " + personal.empresa,
+              url: window.location.href
+            });
+          } catch(e) {}
+        } else {
+          navigator.clipboard.writeText(window.location.href);
+          showToast("✓ Enlace copiado al portapapeles");
+        }
+      });
+    }
+
+    function setupNotifications() {
+      const btnNotif = document.getElementById("btn-activate-notifications");
+      btnNotif.addEventListener("click", async () => {
+        if (!("Notification" in window)) {
+          showToast("Notificaciones no soportadas en este navegador");
+          return;
+        }
+
+        const triggerNotification = () => {
+          const { notificaciones } = CLIENT_CONFIG;
+          if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+            navigator.serviceWorker.ready.then(reg => {
+              reg.showNotification(notificaciones.titulo, {
+                body: notificaciones.cuerpo,
+                icon: notificaciones.icono || "/icon.svg",
+                data: { url: notificaciones.urlDestino || window.location.href }
+              });
+              showToast("🔔 Notificación recibida en tu dispositivo");
+            });
+          } else {
+            new Notification(notificaciones.titulo, {
+              body: notificaciones.cuerpo,
+              icon: notificaciones.icono || "/icon.svg"
+            });
+            showToast("🔔 Notificación recibida en tu dispositivo");
+          }
+        };
+
+        if (Notification.permission === "granted") {
+          triggerNotification();
+        } else if (Notification.permission !== "denied") {
+          const perm = await Notification.requestPermission();
+          if (perm === "granted") {
+            showToast("✓ Notificaciones autorizadas en este dispositivo");
+            triggerNotification();
+
+            // Sincronizar suscripción Web Push con el servidor del dueño si está configurado
+            if (CLIENT_CONFIG.notificaciones.servidorPushEndpoint && "serviceWorker" in navigator) {
+              navigator.serviceWorker.ready.then(async (reg) => {
+                try {
+                  const sub = await reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U"
+                  });
+                  fetch(CLIENT_CONFIG.notificaciones.servidorPushEndpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(sub)
+                  }).catch(() => {});
+                } catch(e) {}
+              });
+            }
+          }
+        } else {
+          showToast("Notificaciones bloqueadas por el navegador");
+        }
+      });
+    }
+
+    function setupPWA() {
+      let deferredPrompt = window.__pwaInstallPrompt || null;
+      const installBanner = document.getElementById("pwa-install-banner");
+      const btnInstall = document.getElementById("btn-install-pwa");
+      const btnInstallLabel = document.getElementById("btn-install-label");
+      const deviceBadge = document.getElementById("install-device-badge");
+      const modalIOS = document.getElementById("modal-ios-guide");
+      const iosView = document.getElementById("modal-ios-view");
+      const androidView = document.getElementById("modal-android-view");
+      const btnCloseIOS = document.getElementById("btn-close-ios");
+      const btnModalDirect = document.getElementById("btn-modal-direct-install");
+      const modalAndroidDesc = document.getElementById("modal-android-desc");
+      const btnModalDirectLabel = document.getElementById("btn-modal-direct-label");
+
+      const ua = window.navigator.userAgent.toLowerCase();
+      const isIOS = /iphone|ipad|ipod/.test(ua) || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+      const isAndroid = /android/.test(ua);
+      const inIframe = (window.self !== window.top);
+
+      if (deviceBadge) {
+        if (isAndroid) {
+          deviceBadge.textContent = "Android Detectado";
+          deviceBadge.classList.remove("hidden");
+          if (btnInstallLabel) btnInstallLabel.textContent = "Instalar de una";
+        } else if (isIOS) {
+          deviceBadge.textContent = "iPhone Detectado";
+          deviceBadge.classList.remove("hidden");
+          if (btnInstallLabel) btnInstallLabel.textContent = "Instalar";
+        }
+      }
+
+      if (modalAndroidDesc) {
+        modalAndroidDesc.textContent = inIframe
+          ? "Abre la tarjeta en tu navegador para instalar de una sola pulsación."
+          : "Instala la tarjeta como app nativa en tu pantalla de inicio sin descargas pesadas.";
+      }
+      if (btnModalDirectLabel) {
+        btnModalDirectLabel.textContent = inIframe ? "Abrir e Instalar de una" : "Instalar Tarjeta Ahora";
+      }
+
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      if (isStandalone) {
+        installBanner.classList.add("hidden");
+        return;
+      }
+
+      const showProperModal = () => {
+        if (isIOS) {
+          if (iosView) iosView.classList.remove("hidden");
+          if (androidView) androidView.classList.add("hidden");
+        } else {
+          if (androidView) androidView.classList.remove("hidden");
+          if (iosView) iosView.classList.add("hidden");
+        }
+        modalIOS.classList.remove("hidden");
+      };
+
+      const btnShowManual = document.getElementById("btn-modal-show-manual");
+      const manualStepsBox = document.getElementById("android-manual-steps-box");
+
+      const showSteps = () => {
+        if (manualStepsBox) manualStepsBox.classList.remove("hidden");
+      };
+
+      if (btnShowManual) btnShowManual.addEventListener("click", showSteps);
+
+      if (btnModalDirect) {
+        btnModalDirect.addEventListener("click", () => {
+          if (inIframe) {
+            window.open(window.location.href + (window.location.search ? '&autoInstall=1' : '?autoInstall=1'), "_blank");
+            modalIOS.classList.add("hidden");
+            return;
+          }
+          const p = deferredPrompt || window.__pwaInstallPrompt;
+          if (p) {
+            p.prompt().then(() => {
+              modalIOS.classList.add("hidden");
+            }).catch(() => {
+              showSteps();
+            });
+          } else {
+            showSteps();
+            showToast("Sigue los 2 pasos en pantalla para añadir la tarjeta");
+          }
+        });
+      }
+
+      const triggerPromptAction = async () => {
+        const promptEvent = deferredPrompt || window.__pwaInstallPrompt;
+
+        if (window.location.protocol === 'file:') {
+          showToast("⚠️ Para instalar la app, súbela a un hosting HTTPS (Vercel, Netlify, cPanel, etc.)");
+          const modalDesc = document.getElementById("modal-android-desc");
+          if (modalDesc) {
+            modalDesc.textContent = "Los navegadores web exigen un enlace HTTPS para instalar la app en la pantalla del teléfono. Al subir este archivo HTML a cualquier servidor web o hosting, el botón 'Instalar de una' funcionará automáticamente.";
+          }
+          showProperModal();
+          return;
+        }
+
+        if (inIframe) {
+          window.open(window.location.href + (window.location.search ? '&autoInstall=1' : '?autoInstall=1'), "_blank");
+          showToast("Abriendo tarjeta en tu teléfono para instalar de una...");
+          return;
+        }
+
+        if (isIOS) {
+          showProperModal();
+          return;
+        }
+
+        if (promptEvent) {
+          try {
+            await promptEvent.prompt();
+            const { outcome } = await promptEvent.userChoice;
+            if (outcome === "accepted") {
+              installBanner.classList.add("hidden");
+              showToast("✓ ¡Tarjeta instalada en tu teléfono!");
+            }
+            deferredPrompt = null;
+            window.__pwaInstallPrompt = null;
+            return;
+          } catch(err) {
+            console.error("Install prompt error:", err);
+          }
+        }
+
+        let prompted = false;
+        const tryDirect = async (e) => {
+          const p = e || window.__pwaInstallPrompt;
+          if (p && !prompted) {
+            prompted = true;
+            try {
+              await p.prompt();
+              const { outcome } = await p.userChoice;
+              if (outcome === "accepted") {
+                installBanner.classList.add("hidden");
+                showToast("✓ ¡Tarjeta instalada en tu teléfono!");
+              }
+            } catch(e) {}
+          }
+        };
+        window.addEventListener("beforeinstallprompt", tryDirect, { once: true });
+        window.addEventListener("pwa-ready", () => tryDirect(), { once: true });
+
+        setTimeout(() => {
+          if (!prompted) {
+            showProperModal();
+          }
+        }, 350);
+      };
+
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        window.__pwaInstallPrompt = e;
+        installBanner.classList.remove("hidden");
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("autoInstall") === "1") {
+          e.prompt();
+        }
+      });
+
+      window.addEventListener("appinstalled", () => {
+        installBanner.classList.add("hidden");
+        deferredPrompt = null;
+        window.__pwaInstallPrompt = null;
+        showToast("✓ ¡Tarjeta instalada en tu teléfono!");
+      });
+
+      btnInstall.addEventListener("click", triggerPromptAction);
+      btnCloseIOS.addEventListener("click", () => modalIOS.classList.add("hidden"));
+    }
+
+    function setupOwnerModal() {
+      const modal = document.getElementById("modal-owner-push");
+      const btnOpenFooter = document.getElementById("btn-open-owner");
+      const btnOpenNFC = document.getElementById("btn-owner-nfc");
+      const btnClose = document.getElementById("btn-close-owner");
+      const pinView = document.getElementById("owner-pin-view");
+      const composeView = document.getElementById("owner-compose-view");
+      const pinInput = document.getElementById("owner-pin-input");
+      const pinError = document.getElementById("owner-pin-error");
+      const btnSubmitPin = document.getElementById("btn-submit-owner-pin");
+      const btnSendPush = document.getElementById("btn-send-owner-push");
+      const notifTitle = document.getElementById("owner-notif-title");
+      const notifBody = document.getElementById("owner-notif-body");
+      const notifUrl = document.getElementById("owner-notif-url");
+
+      const getActivePin = () => {
+        return localStorage.getItem("tarjetapro_owner_pin") || CLIENT_CONFIG.personal.pinAdmin || "1234";
+      };
+
+      const openModal = () => {
+        modal.classList.remove("hidden");
+        pinInput.focus();
+      };
+
+      if (btnOpenFooter) btnOpenFooter.addEventListener("click", openModal);
+      if (btnOpenNFC) btnOpenNFC.addEventListener("click", openModal);
+      if (btnClose) btnClose.addEventListener("click", () => modal.classList.add("hidden"));
+      modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.add("hidden"); });
+
+      // Verificar PIN
+      btnSubmitPin.addEventListener("click", () => {
+        if (pinInput.value === getActivePin()) {
+          pinView.classList.add("hidden");
+          composeView.classList.remove("hidden");
+          notifUrl.value = "https://wa.me/" + CLIENT_CONFIG.contacto.whatsapp;
+        } else {
+          pinError.classList.remove("hidden");
+          pinInput.value = "";
+        }
+      });
+
+      // Pestañas internas: Difusión vs Seguridad
+      const tabBroadcast = document.getElementById("btn-owner-tab-broadcast");
+      const tabSecurity = document.getElementById("btn-owner-tab-security");
+      const panelBroadcast = document.getElementById("owner-panel-broadcast");
+      const panelSecurity = document.getElementById("owner-panel-security");
+
+      if (tabBroadcast && tabSecurity && panelBroadcast && panelSecurity) {
+        tabBroadcast.addEventListener("click", () => {
+          tabBroadcast.className = "py-1.5 px-2 rounded-lg bg-amber-500 text-slate-950 font-bold transition";
+          tabSecurity.className = "py-1.5 px-2 rounded-lg text-slate-400 hover:text-white transition";
+          panelBroadcast.classList.remove("hidden");
+          panelSecurity.classList.add("hidden");
+        });
+        tabSecurity.addEventListener("click", () => {
+          tabSecurity.className = "py-1.5 px-2 rounded-lg bg-amber-500 text-slate-950 font-bold transition";
+          tabBroadcast.className = "py-1.5 px-2 rounded-lg text-slate-400 hover:text-white transition";
+          panelSecurity.classList.remove("hidden");
+          panelBroadcast.classList.add("hidden");
+        });
+      }
+
+      // Guardar Nuevo PIN
+      const btnSavePin = document.getElementById("btn-save-new-pin");
+      const newPinInput = document.getElementById("owner-new-pin-input");
+      const confirmPinInput = document.getElementById("owner-confirm-pin-input");
+      const pinChangeError = document.getElementById("owner-pin-change-error");
+      const btnResetPin = document.getElementById("btn-reset-owner-pin");
+
+      if (btnSavePin) {
+        btnSavePin.addEventListener("click", () => {
+          const val1 = newPinInput.value.trim();
+          const val2 = confirmPinInput.value.trim();
+          pinChangeError.classList.add("hidden");
+
+          if (val1.length < 4 || val1.length > 6 || !/^d+$/.test(val1)) {
+            pinChangeError.textContent = "El nuevo PIN debe tener entre 4 y 6 dígitos numéricos.";
+            pinChangeError.classList.remove("hidden");
+            return;
+          }
+          if (val1 !== val2) {
+            pinChangeError.textContent = "Los PINs no coinciden.";
+            pinChangeError.classList.remove("hidden");
+            return;
+          }
+
+          localStorage.setItem("tarjetapro_owner_pin", val1);
+          newPinInput.value = "";
+          confirmPinInput.value = "";
+          showToast("✓ ¡PIN de Dueño actualizado con éxito!");
+          if (tabBroadcast) tabBroadcast.click();
+        });
+      }
+
+      if (btnResetPin) {
+        btnResetPin.addEventListener("click", () => {
+          localStorage.removeItem("tarjetapro_owner_pin");
+          showToast("✓ PIN restablecido al de fábrica: 1234");
+          if (tabBroadcast) tabBroadcast.click();
+        });
+      }
+
+      // Enviar Notificación a Clientes
+      btnSendPush.addEventListener("click", () => {
+        const title = notifTitle.value || "Novedad de " + CLIENT_CONFIG.personal.nombre;
+        const body = notifBody.value || "Tengo una nueva promoción para mis clientes.";
+
+        btnSendPush.disabled = true;
+        btnSendPush.textContent = "Transmitiendo a los teléfonos...";
+
+        setTimeout(() => {
+          if (Notification && Notification.permission === "granted") {
+            try {
+              new Notification(title, { body: body, icon: "/icon.svg" });
+            } catch(e) {
+              if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+                navigator.serviceWorker.ready.then(reg => reg.showNotification(title, { body: body, icon: "/icon.svg" }));
+              }
+            }
+          }
+
+          showToast("🚀 ¡Notificación enviada a todos tus clientes!");
+          btnSendPush.disabled = false;
+          btnSendPush.textContent = "🚀 Enviar Notificación a mis Clientes";
+          modal.classList.add("hidden");
+        }, 800);
+      });
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById("toast-message");
+      const toastText = document.getElementById("toast-text");
+      toastText.textContent = text;
+      toast.classList.remove("opacity-0", "pointer-events-none");
+      toast.classList.add("opacity-100");
+      setTimeout(() => {
+        toast.classList.remove("opacity-100");
+        toast.classList.add("opacity-0", "pointer-events-none");
+      }, 2600);
+    }
+  </script>
+</body>
+</html>
