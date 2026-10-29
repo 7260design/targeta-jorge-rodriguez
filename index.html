@@ -282,10 +282,12 @@
           </div>
         </div>
 
-        <button id="btn-activate-notifications" class="w-full py-2.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-xs font-semibold text-slate-200 border border-white/10 flex items-center justify-center gap-2 transition">
-          <svg class="w-3.5 h-3.5" style="color: var(--accent-color);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-          </svg>
+        <button id="btn-activate-notifications" class="w-full py-2.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-xs font-semibold text-slate-200 border border-white/10 flex items-center justify-center gap-2 transition cursor-pointer">
+          <span id="notif-btn-icon" class="flex items-center shrink-0">
+            <svg class="w-3.5 h-3.5" style="color: var(--accent-color);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+            </svg>
+          </span>
           <span id="notif-btn-label">Activar Notificaciones</span>
         </button>
       </section>
@@ -1011,7 +1013,10 @@
       } catch (e) {}
     }
 
-    function displayIncomingPush(titulo, cuerpo, url) {
+    function displayIncomingPush(titulo, cuerpo, url, force) {
+      if (!force && localStorage.getItem("tarjeta_notif_enabled") === "false") {
+        return; // Usuario pausó/silenció las notificaciones en este dispositivo
+      }
       try {
         playChime();
       } catch (e) {}
@@ -1071,25 +1076,52 @@
 
     function setupNotifications() {
       const btnNotif = document.getElementById("btn-activate-notifications");
+      const notifIcon = document.getElementById("notif-btn-icon");
       const notifLabel = document.getElementById("notif-btn-label");
       const cardChannel = "tarjeta_" + ((CLIENT_CONFIG.personal.nfcId || CLIENT_CONFIG.personal.nombre || "pro")).toLowerCase().replace(/[^a-z0-9]/g, "_");
 
+      function isNotifActive() {
+        const stored = localStorage.getItem("tarjeta_notif_enabled");
+        if (stored === "false") return false;
+        if (stored === "true") return true;
+        return typeof Notification !== "undefined" && Notification.permission === "granted";
+      }
+
       function updateNotificationButtonState() {
         if (!btnNotif) return;
-        const isGranted = ((typeof Notification !== "undefined" && Notification.permission === "granted") || localStorage.getItem("tarjeta_notif_enabled") === "true") && localStorage.getItem("tarjeta_notif_enabled") !== "false";
-        if (isGranted) {
+        const active = isNotifActive();
+        const hasPermission = typeof Notification !== "undefined" && Notification.permission === "granted";
+
+        if (active) {
           btnNotif.className = "w-full py-2.5 px-3 rounded-lg text-xs font-bold border flex items-center justify-center gap-2 transition shadow-sm cursor-pointer";
           btnNotif.style.backgroundColor = "rgba(16, 185, 129, 0.15)";
           btnNotif.style.borderColor = "rgba(16, 185, 129, 0.4)";
           btnNotif.style.color = "#34d399";
+          if (notifIcon) {
+            notifIcon.innerHTML = '<svg class="w-3.5 h-3.5 text-emerald-400 stroke-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+          }
           if (notifLabel) {
-            notifLabel.innerHTML = '<span class="flex items-center gap-1.5 justify-center"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Notificaciones Activas ✓</span>';
+            notifLabel.innerHTML = '<span class="flex items-center gap-1.5 justify-center"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> <span>Notificaciones Activas <span class="opacity-75 font-normal text-[10px]">(Toca para pausar)</span></span></span>';
+          }
+        } else if (hasPermission || localStorage.getItem("tarjeta_notif_enabled") === "false") {
+          btnNotif.className = "w-full py-2.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition border cursor-pointer";
+          btnNotif.style.backgroundColor = "rgba(245, 158, 11, 0.12)";
+          btnNotif.style.borderColor = "rgba(245, 158, 11, 0.35)";
+          btnNotif.style.color = "#fbbf24";
+          if (notifIcon) {
+            notifIcon.innerHTML = '<svg class="w-3.5 h-3.5 text-amber-400 stroke-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.143 17.082a24.248 24.248 0 003.844.148m-9.444-3.3a23.774 23.774 0 005.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0M3 3l18 18M10.5 4.5a6 6 0 016.364 6.364M6.75 6.75A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022" /></svg>';
+          }
+          if (notifLabel) {
+            notifLabel.innerHTML = '<span class="flex items-center gap-1.5 justify-center"><span>🔕 Notificaciones Silenciadas <span class="opacity-80 font-normal text-[10px]">(Toca para activar)</span></span></span>';
           }
         } else {
           btnNotif.className = "w-full py-2.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition border cursor-pointer";
           btnNotif.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
           btnNotif.style.borderColor = "var(--border-color, rgba(255, 255, 255, 0.1))";
           btnNotif.style.color = "#e2e8f0";
+          if (notifIcon) {
+            notifIcon.innerHTML = '<svg class="w-3.5 h-3.5" style="color: var(--accent-color);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>';
+          }
           if (notifLabel) {
             notifLabel.textContent = "Activar Notificaciones";
           }
@@ -1143,6 +1175,26 @@
 
       if (btnNotif) {
         btnNotif.addEventListener("click", async () => {
+          // 1. Si ya están activas -> el usuario toca para DESACTIVAR / PAUSAR
+          if (isNotifActive()) {
+            localStorage.setItem("tarjeta_notif_enabled", "false");
+            updateNotificationButtonState();
+            showToast("🔕 Notificaciones pausadas en este dispositivo");
+            return;
+          }
+
+          // 2. Si estaban pausadas pero el navegador ya tiene permiso otorgado -> REACTIVAR DE UNA
+          if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+            localStorage.setItem("tarjeta_notif_enabled", "true");
+            updateNotificationButtonState();
+            showToast("🔔 ¡Notificaciones reactivadas con éxito!");
+            const testTitle = "🔔 Novedades de " + (CLIENT_CONFIG.personal.nombre || "Tarjeta Pro");
+            const testBody = "Notificaciones reactivadas en tu teléfono.";
+            displayIncomingPush(testTitle, testBody, window.location.href, true);
+            return;
+          }
+
+          // 3. Si aún no tiene permisos solicitados
           const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
           if (!("Notification" in window)) {
             if (isIOS) {
@@ -1150,16 +1202,6 @@
             } else {
               showToast("⚠️ Notificaciones no soportadas en este navegador");
             }
-            return;
-          }
-
-          if (Notification.permission === "granted") {
-            localStorage.setItem("tarjeta_notif_enabled", "true");
-            updateNotificationButtonState();
-            showToast("✓ Notificaciones activas en este teléfono");
-            const testTitle = "🔔 Novedades de " + (CLIENT_CONFIG.personal.nombre || "Tarjeta Pro");
-            const testBody = "Tu teléfono está listo para recibir avisos en tiempo real.";
-            displayIncomingPush(testTitle, testBody, window.location.href);
             return;
           }
 
@@ -1182,7 +1224,7 @@
               
               const welcomeTitle = "🔔 ¡Conectado con " + (CLIENT_CONFIG.personal.nombre || "Tarjeta Pro") + "!";
               const welcomeBody = "Recibirás avisos y promociones directamente en tu teléfono.";
-              displayIncomingPush(welcomeTitle, welcomeBody, window.location.href);
+              displayIncomingPush(welcomeTitle, welcomeBody, window.location.href, true);
             } else {
               showToast("Permiso de notificaciones no otorgado");
             }
@@ -1544,7 +1586,7 @@
 
           // 4. Mostrar en pantalla de inmediato
           try {
-            displayIncomingPush(title, body, url);
+            displayIncomingPush(title, body, url, true);
           } catch (e) {
             console.warn("Display push error:", e);
           }
